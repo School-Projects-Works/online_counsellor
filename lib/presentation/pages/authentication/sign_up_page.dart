@@ -234,7 +234,18 @@ class _PersonalInfoState extends ConsumerState<PersonalInfo> {
                     }
                     return null;
                   },
-                  items: [],
+                  items: [
+                    'Primary',
+                    'Secondary',
+                    'Tertiary',
+                    'Post Graduate',
+                    'Doctorate'
+                  ]
+                      .map((e) => DropdownMenuItem(
+                            value: e,
+                            child: Text(e),
+                          ))
+                      .toList(),
                   hintText: 'Educational Level',
                 ),
                 if (ref.watch(userTypeProvider) != 'Counsellor')

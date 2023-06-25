@@ -141,6 +141,7 @@ class UserSignInProvider extends StateNotifier<User?> {
         final UserModel? userModel = await FireStoreServices.getUser(user.uid);
         if (userModel != null) {
           //set user to provider
+          CustomDialog.dismiss();
           ref.read(userProvider.notifier).setUser(userModel);
           if (mounted) {
             noReturnSendToPage(context, const HomeMainPage());
