@@ -15,7 +15,7 @@ class FirebaseAuthService {
     return currentUser != null;
   }
 
-  Future<User?> signIn(String email, String password) async {
+  static Future<User?> signIn(String email, String password) async {
     try {
       final credential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
@@ -70,10 +70,5 @@ class FirebaseAuthService {
   static sendEmailVerification() {
     final currentUser = _firebaseAuth.currentUser;
     currentUser!.sendEmailVerification();
-  }
-
-  static updateUserProfile({String? userType}) {
-    final currentUser = _firebaseAuth.currentUser;
-    currentUser!.updateDisplayName(userType);
   }
 }

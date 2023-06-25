@@ -1,8 +1,12 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:online_counsellor/core/functions.dart';
 import '../core/components/widgets/smart_dialog.dart';
 import '../models/user_model.dart';
+import '../presentation/home/home_main.dart';
 import '../services/firebase_auth.dart';
 import '../services/firebase_fireStore.dart';
 import '../services/firebase_storage.dart';
@@ -42,26 +46,12 @@ class UserProvider extends StateNotifier<UserModel> {
     state = state.copyWith(address: value);
   }
 
-  void setUserHeight(String s) {
-    var height = double.tryParse(s);
-    state = state.copyWith(height: height);
+  void setUserType(String type) {
+    state = state.copyWith(userType: type);
   }
 
-  void setUserWeight(String s) {
-    var weight = double.tryParse(s);
-    state = state.copyWith(weight: weight);
-  }
-
-  void setUserBloodType(String value) {
-    state = state.copyWith(bloodType: value);
-  }
-
-  void setUserMedicalHistory(value) {
-    state = state.copyWith(medicalHistory: value);
-  }
-
-  void setUserVaccinationStatus(value) {
-    state = state.copyWith(vaccinationStatus: value);
+  void setDOB(String s) {
+    state = state.copyWith(dob: s);
   }
 
   void createUser(WidgetRef ref) async {
@@ -85,8 +75,7 @@ class UserProvider extends StateNotifier<UserModel> {
       final String response = await FireStoreServices.saveUser(state);
       if (response == 'success') {
         //? UPDATE user profile
-        await FirebaseAuthService.updateUserProfile(
-            userType: ref.watch(userTypeProvider));
+
         // clear all states
         ref.read(userProvider.notifier).state = UserModel();
         await FirebaseAuthService.signOut();
@@ -106,8 +95,83 @@ class UserProvider extends StateNotifier<UserModel> {
       }
     }
   }
+
+  void setUserRegion(String region) {
+    state = state.copyWith(region: region);
+  }
+
+  void setUserCity(String s) {
+    state = state.copyWith(city: s);
+  }
+
+  void setAbout(String s) {
+    state = state.copyWith(about: s);
+  }
+
+  void setCounsellorType(String type) {
+    state = state.copyWith(counsellorType: type);
+  }
+
+  void setMaritalStatus(param0) {}
+
+  void setEducationLevel(param0) {}
+}
+
+final userSignInProvider = StateNotifierProvider<UserSignInProvider, User?>(
+    (ref) => UserSignInProvider());
+
+class UserSignInProvider extends StateNotifier<User?> {
+  UserSignInProvider() : super(null);
+
+  void setUser(User? user) {
+    state = user;
+  }
+
+  void signIn(
+      {required BuildContext context,
+      required WidgetRef ref,
+      required String email,
+      required String password}) async {
+    CustomDialog.showLoading(message: 'Signing In... Please wait');
+    final user = await FirebaseAuthService.signIn(email, password);
+    if (user != null) {
+      state = user;
+      if (user.emailVerified) {
+        //get user from firestore
+        final UserModel? userModel = await FireStoreServices.getUser(user.uid);
+        if (userModel != null) {
+          //set user to provider
+          ref.read(userProvider.notifier).setUser(userModel);
+          if (mounted) {
+            noReturnSendToPage(context, const HomeMainPage());
+          }
+        } else {
+          await FirebaseAuthService.signOut();
+          CustomDialog.dismiss();
+          CustomDialog.showError(
+            title: 'Error',
+            message: 'Could not retrieve user...Try again later ',
+          );
+        }
+      } else {
+        await FirebaseAuthService.signOut();
+        CustomDialog.dismiss();
+        CustomDialog.showInfo(
+            title: 'Email not verified',
+            message:
+                'Please verify your email address to login.\n Do not have verification Link ?',
+            onConfirmText: 'Send Link',
+            onConfirm: () {
+              FirebaseAuthService.sendEmailVerification();
+              CustomDialog.dismiss();
+            });
+      }
+    }
+  }
 }
 
 final userImageProvider = StateProvider<File?>((ref) => null);
-final idImageProvider = StateProvider<File?>((ref) => null);
 final certificateProvider = StateProvider<File?>((ref) => null);
+
+final userTypeProvider = StateProvider<String?>((ref) => null);
+final counsellorTypeProvider = StateProvider<String?>((ref) => null);
