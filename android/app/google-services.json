@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "414938965130",
+    "project_id": "online-counselling-admin",
+    "storage_bucket": "online-counselling-admin.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:414938965130:android:ade25087019fb9f1e33973",
+        "android_client_info": {
+          "package_name": "com.fussionTeck.online_counsellor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "414938965130-h8jmuhmidbl03hj4psle9iha2orc830c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAUky0y7eYoUC4xE3pjLTRoP8bTefsLkDM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "414938965130-h8jmuhmidbl03hj4psle9iha2orc830c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
