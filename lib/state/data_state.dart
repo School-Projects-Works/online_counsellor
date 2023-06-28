@@ -1,13 +1,16 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:online_counsellor/core/components/constants/strings.dart';
 import 'package:online_counsellor/core/functions.dart';
 import 'package:online_counsellor/presentation/pages/authentication/sign_up_page.dart';
 import 'package:online_counsellor/services/other_services.dart';
 import '../core/components/widgets/smart_dialog.dart';
+import '../models/appointment_model.dart';
 import '../models/quotes_model.dart';
 import '../models/user_model.dart';
 import '../presentation/pages/home/home_main.dart';
@@ -217,10 +220,10 @@ final counsellorTypeProvider = StateProvider<String?>((ref) => null);
 final selectedCategoryProvider =
     StateProvider<String>((ref) => counsellorTypeList[0]);
 
-final quotesProvider = StateNotifierProvider<QuotesProvider, QuotesModel>(
+final quotesProvider = StateNotifierProvider<QuotesProvider, QuotesModel?>(
     (ref) => QuotesProvider());
 
-class QuotesProvider extends StateNotifier<QuotesModel> {
+class QuotesProvider extends StateNotifier<QuotesModel?> {
   QuotesProvider() : super(QuotesModel(author: '', quote: '', category: '')) {
     getQuotes();
   }
@@ -230,7 +233,7 @@ class QuotesProvider extends StateNotifier<QuotesModel> {
 
   void getQuotes() async {
     var cat = getRandomCat();
-    final QuotesModel quotes = await OtherServices.getQuotes(cat);
+    final QuotesModel? quotes = await OtherServices.getQuotes(cat);
     state = quotes;
   }
 }
@@ -283,3 +286,65 @@ final searchControllerProvider =
 });
 
 final selectedCounsellorProvider = StateProvider<UserModel?>((ref) => null);
+
+final currentAppointmentProvider =
+    StateNotifierProvider<CurrentAppointmentProvider, AppointmentModel>(
+        (ref) => CurrentAppointmentProvider());
+
+class CurrentAppointmentProvider extends StateNotifier<AppointmentModel> {
+  CurrentAppointmentProvider() : super(AppointmentModel());
+  void setCurrentAppointment(AppointmentModel appointment) {
+    state = appointment;
+  }
+
+  void setDate(DateTime? value) {
+    var date = DateFormat('EEE dd, MMM yyyy').format(value!);
+    state = state.copyWith(date: date);
+  }
+
+  void setTime(TimeOfDay? value, BuildContext context) {
+    var time = value!.format(context);
+    state =
+        state.copyWith(time: '$time ${value.period.index == 0 ? 'AM' : 'PM'}');
+  }
+
+  void bookAppointment(BuildContext context, WidgetRef ref) async {
+    CustomDialog.showLoading(message: 'Booking Appointment... Please wait');
+    var user = ref.watch(userProvider);
+    var counsellor = ref.watch(selectedCounsellorProvider);
+    state.id = '${user.id}_${counsellor!.id}';
+    state.counsellorId = counsellor.id;
+    state.counsellorName = counsellor.name;
+    state.counsellorImage = counsellor.profile;
+    state.userId = user.id;
+    state.userName = user.name;
+    state.userImage = user.profile;
+    state.counsellorType = counsellor.counsellorType;
+    state.counsellorState = false;
+    state.userState = true;
+    state.status = 'pending';
+    state.createdAt = DateTime.now().toUtc().millisecondsSinceEpoch;
+    final bool result = await FireStoreServices.bookAppointment(state);
+    if (result) {
+      CustomDialog.dismiss();
+      CustomDialog.showSuccess(
+        title: 'Success',
+        message: 'Appointment booked successfully',
+        onOkayPressed: () {
+          Navigator.pop(context);
+        },
+      );
+    } else {
+      CustomDialog.dismiss();
+      CustomDialog.showError(
+          title: 'Error', message: 'Could not book appointment');
+    }
+  }
+}
+
+final appointmentStreamProvider =
+    StreamProvider.autoDispose<QuerySnapshot<Map<String, dynamic>>>((ref) {
+  var userId = ref.watch(userProvider).id;
+  var counsellorId = ref.watch(selectedCounsellorProvider)!.id;
+  return FireStoreServices.getAppointmentStream(userId!, counsellorId!);
+});

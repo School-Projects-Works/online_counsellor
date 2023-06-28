@@ -13,14 +13,15 @@ class OtherServices {
     //add limit
   };
 
-  static Future<QuotesModel> getQuotes(String category) async {
-    final response =
-        await http.get(Uri.parse('$baseUrl$category'), headers: headers);
-    if (response.statusCode == 200) {
-      var data = json.decode(response.body);
-      return QuotesModel.fromMap(data[0]);
-    } else {
-      throw Exception('Failed to load data');
-    }
+  static Future<QuotesModel?> getQuotes(String category) async {
+    // final response =
+    //     await http.get(Uri.parse('$baseUrl$category'), headers: headers);
+    // if (response.statusCode == 200) {
+    //   var data = json.decode(response.body);
+    //   return QuotesModel.fromMap(data[0]);
+    // } else {
+    //   return null;
+    // }
+    return null;
   }
 }

@@ -178,7 +178,8 @@ class _HomePageState extends ConsumerState<HomePage> {
           ),
         if (!_focus.hasFocus) const SizedBox(height: 5),
         if (!_focus.hasFocus)
-          if (ref.watch(quotesProvider).quote.isNotEmpty)
+          if (ref.watch(quotesProvider) != null &&
+              ref.watch(quotesProvider)!.quote.isNotEmpty)
             Card(
                 color: secondaryColor.withOpacity(0.5),
                 margin: const EdgeInsets.all(10),
@@ -205,14 +206,14 @@ class _HomePageState extends ConsumerState<HomePage> {
                         children: [
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Text(ref.watch(quotesProvider).quote,
+                            child: Text(ref.watch(quotesProvider)!.quote,
                                 maxLines: 4,
                                 overflow: TextOverflow.ellipsis,
                                 textAlign: TextAlign.center,
                                 style: normalText()),
                           ),
                           const SizedBox(height: 10),
-                          Text("- ${ref.watch(quotesProvider).author} -",
+                          Text("- ${ref.watch(quotesProvider)!.author} -",
                               textAlign: TextAlign.center,
                               style: normalText(
                                   fontWeight: FontWeight.bold,

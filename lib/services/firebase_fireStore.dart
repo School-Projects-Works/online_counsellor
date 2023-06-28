@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:online_counsellor/models/appointment_model.dart';
 import '../models/user_model.dart';
 
 class FireStoreServices {
@@ -52,5 +53,24 @@ class FireStoreServices {
       counsellorsList.add(UserModel.fromMap(element.data()));
     }
     return counsellorsList;
+  }
+
+  static Future<bool> bookAppointment(AppointmentModel state) {
+    return _fireStore
+        .collection('appointments')
+        .doc(state.id)
+        .set(state.toMap())
+        .then((value) => true)
+        .catchError((error) => false);
+  }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getAppointmentStream(
+      String userId, String counsellorId) {
+    return _fireStore
+        .collection('appointments')
+        .where('counsellorId', isEqualTo: counsellorId)
+        .where('userId', isEqualTo: userId)
+        .where('status', isEqualTo: 'pending')
+        .snapshots();
   }
 }
