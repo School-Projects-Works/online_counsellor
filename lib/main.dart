@@ -1,13 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:online_counsellor/presentation/pages/home/home_main.dart';
 import 'package:online_counsellor/presentation/pages/authentication/auth_main_page.dart';
+import 'package:online_counsellor/presentation/pages/home/pages/chart_page.dart';
 import 'package:online_counsellor/services/firebase_auth.dart';
 import 'package:online_counsellor/services/firebase_fireStore.dart';
-import 'package:online_counsellor/services/other_services.dart';
 import 'package:online_counsellor/state/data_state.dart';
 import 'package:online_counsellor/styles/colors.dart';
 import 'core/components/widgets/smart_dialog.dart';
@@ -15,11 +17,19 @@ import 'core/functions.dart';
 import 'firebase_options.dart';
 import 'models/user_model.dart';
 
+//firebase meeageing handler
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  print('Handling a background message ${message.messageId}');
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await FirebaseMessaging.instance.getInitialMessage();
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -62,6 +72,14 @@ class _MyAppState extends ConsumerState<MyApp> {
   // set user isOnline to false in firestore when app is closed
 
   @override
+  void initState() {
+    requestPermission();
+    getToken();
+    initLocalNotification();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
         title: 'Online Counsellor',
@@ -92,5 +110,75 @@ class _MyAppState extends ConsumerState<MyApp> {
                 );
               }
             }));
+  }
+
+  void requestPermission() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
+
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      print('User granted permission');
+    } else if (settings.authorizationStatus ==
+        AuthorizationStatus.provisional) {
+      print('User granted provisional permission');
+    } else {
+      print('User declined or has not accepted permission');
+    }
+  }
+
+  void getToken() async {
+    await FirebaseMessaging.instance.getToken().then((value) {
+      print('Token:============================ $value');
+      ref.read(messageTokenProvider.notifier).state = value;
+    });
+  }
+
+  void initLocalNotification() async {
+    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+        FlutterLocalNotificationsPlugin();
+    var android = const AndroidInitializationSettings('@mipmap/ic_launcher');
+    // var ios = const IOSInitializationSettings();
+    var initSettings = InitializationSettings(
+      android: android,
+    );
+    await flutterLocalNotificationsPlugin.initialize(initSettings,
+        onDidReceiveNotificationResponse: onDidReceiveNotificationResponse);
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification? notification = message.notification;
+      AndroidNotification? android = message.notification?.android;
+      if (notification != null && android != null) {
+        flutterLocalNotificationsPlugin.show(
+            notification.hashCode,
+            notification.title,
+            notification.body,
+            const NotificationDetails(
+              android: AndroidNotificationDetails(
+                'channel id',
+                'channel name',
+                channelDescription: 'channel description',
+                icon: '@mipmap/ic_launcher',
+              ),
+            ));
+      }
+    });
+  }
+
+  void onDidReceiveNotificationResponse(
+      NotificationResponse notificationResponse) async {
+    final String? payload = notificationResponse.payload;
+    if (notificationResponse.payload != null) {
+      debugPrint('notification payload: $payload');
+    }
+    sendToPage(context, const ChatPage());
   }
 }

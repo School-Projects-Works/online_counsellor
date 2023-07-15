@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:online_counsellor/models/appointment_model.dart';
+import 'package:online_counsellor/models/chat_model.dart';
+import 'package:online_counsellor/models/session_model.dart';
 import '../models/user_model.dart';
 
 class FireStoreServices {
@@ -72,5 +74,28 @@ class FireStoreServices {
         .where('userId', isEqualTo: userId)
         .where('status', isEqualTo: 'pending')
         .snapshots();
+  }
+
+  static Future<bool> bookSession(SessionModel state) {
+    //create a new session document if it does not exist
+    return _fireStore
+        .collection('sessions')
+        .doc(state.id)
+        .set(state.toMap())
+        .then((value) => true)
+        .catchError((error) => false);
+  }
+
+  static Future<bool> hasBookedSession(SessionModel state) {
+    return _fireStore
+        .collection('sessions')
+        .doc(state.id)
+        .get()
+        .then((value) => value.exists)
+        .catchError((error) => false);
+  }
+
+  static createChat(ChatModel chat) {
+    _fireStore.collection('chats').doc(chat.id).set(chat.toMap());
   }
 }

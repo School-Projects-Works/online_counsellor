@@ -27,6 +27,9 @@ dependencies:
   intl: ^0.18.1
   persistent_bottom_nav_bar: ^5.0.2
   http: ^0.13.6
+  flutter_firebase_chat_core: ^1.6.7
+  firebase_messaging: ^14.6.4
+  flutter_local_notifications: ^14.1.1
 
 dev_dependencies:
   flutter_test:

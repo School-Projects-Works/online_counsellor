@@ -11,9 +11,12 @@ import 'package:online_counsellor/presentation/pages/authentication/sign_up_page
 import 'package:online_counsellor/services/other_services.dart';
 import '../core/components/widgets/smart_dialog.dart';
 import '../models/appointment_model.dart';
+import '../models/chat_model.dart';
 import '../models/quotes_model.dart';
+import '../models/session_model.dart';
 import '../models/user_model.dart';
 import '../presentation/pages/home/home_main.dart';
+import '../presentation/pages/home/pages/chart_page.dart';
 import '../services/firebase_auth.dart';
 import '../services/firebase_fireStore.dart';
 import '../services/firebase_storage.dart';
@@ -298,7 +301,8 @@ class CurrentAppointmentProvider extends StateNotifier<AppointmentModel> {
   }
 
   void setDate(DateTime? value) {
-    var date = DateFormat('EEE dd, MMM yyyy').format(value!);
+    if (value == null) return;
+    var date = DateFormat('EEE dd, MMM yyyy').format(value);
     state = state.copyWith(date: date);
   }
 
@@ -348,3 +352,65 @@ final appointmentStreamProvider =
   var counsellorId = ref.watch(selectedCounsellorProvider)!.id;
   return FireStoreServices.getAppointmentStream(userId!, counsellorId!);
 });
+
+final currentSessionProvider =
+    StateNotifierProvider<CurrentSessionProvider, SessionModel>(
+        (ref) => CurrentSessionProvider());
+
+class CurrentSessionProvider extends StateNotifier<SessionModel> {
+  CurrentSessionProvider() : super(SessionModel());
+  void setCurrentSession(SessionModel session) {
+    state = session;
+  }
+
+  void bookSession(BuildContext context, WidgetRef ref) async {
+    CustomDialog.showLoading(message: 'Booking Session... Please wait');
+    var user = ref.watch(userProvider);
+    var counsellor = ref.watch(selectedCounsellorProvider);
+    state.id = '${user.id}_${counsellor!.id}';
+    state.counsellorId = counsellor.id;
+    state.counsellorName = counsellor.name;
+    state.counsellorImage = counsellor.profile;
+    state.userId = user.id;
+    state.userName = user.name;
+    state.userImage = user.profile;
+    state.createdAt = DateTime.now().toUtc().millisecondsSinceEpoch;
+    //check if user has booked session before
+    var hasBooked = await FireStoreServices.hasBookedSession(state);
+    if (hasBooked) {
+      CustomDialog.dismiss();
+      if (mounted) {
+        Navigator.pop(context);
+        sendToPage(context, const ChatPage());
+      }
+    } else {
+      final bool result = await FireStoreServices.bookSession(state);
+      if (result) {
+        // create new Chat....
+        var chat = ChatModel(
+          id: DateTime.now().toUtc().millisecondsSinceEpoch.toString(),
+          sessionId: state.id,
+          status: 'pending',
+          sessionDateTimestamp: DateTime.now().toUtc().millisecondsSinceEpoch,
+          userDeleted: false,
+          counsellorDeleted: false,
+        );
+        await FireStoreServices.createChat(chat);
+        CustomDialog.dismiss();
+        CustomDialog.showSuccess(
+          title: 'Success',
+          message: 'Session booked successfully',
+          onOkayPressed: () {
+            Navigator.pop(context);
+          },
+        );
+      } else {
+        CustomDialog.dismiss();
+        CustomDialog.showError(
+            title: 'Error', message: 'Could not book session');
+      }
+    }
+  }
+}
+
+final messageTokenProvider = StateProvider<String?>((ref) => null);

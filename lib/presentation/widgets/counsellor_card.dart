@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:online_counsellor/core/functions.dart';
 import 'package:online_counsellor/models/user_model.dart';
 import 'package:online_counsellor/styles/colors.dart';
-
 import '../../state/data_state.dart';
 import 'counsellor_open_page.dart';
 
@@ -56,6 +55,8 @@ class CounsellorCard extends ConsumerWidget {
                         fontWeight: FontWeight.bold)),
                 const SizedBox(height: 2),
                 Text(user.name ?? "Name",
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                         color: Colors.black,
                         fontSize: 16,
@@ -73,6 +74,8 @@ class CounsellorCard extends ConsumerWidget {
                 const SizedBox(height: 2),
                 Text(
                     '${user.address ?? "Address"}, ${user.city ?? "City"}, ${user.region ?? "Region"}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style:
                         const TextStyle(color: Colors.black45, fontSize: 14)),
                 const SizedBox(height: 10),

@@ -51,6 +51,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     return Scaffold(
       backgroundColor: primaryColor.withOpacity(0.1),
       appBar: AppBar(
+        elevation: 0,
         title: Row(children: [
           Image.asset(
             Assets.logoIcon,
@@ -159,7 +160,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               ],
             ),
             subtitle: SizedBox(
-              height: 200,
+              height: 215,
               child: sortedList.isNotEmpty
                   ? ListView.builder(
                       scrollDirection: Axis.horizontal,
@@ -240,7 +241,7 @@ class _HomePageState extends ConsumerState<HomePage> {
           LayoutBuilder(builder: (context, constraints) {
             var newList = ref.watch(filteredCounsellorsProvider(''));
             return SizedBox(
-              height: 200,
+              height: 215,
               child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   shrinkWrap: true,
