@@ -48,26 +48,9 @@ class _HomePageState extends ConsumerState<HomePage> {
     var counsellorList = ref.watch(
         filteredCounsellorsProvider(ref.watch(selectedCategoryProvider)));
     var sortedList = sortUsersByRating(counsellorList);
-    return Scaffold(
-      backgroundColor: primaryColor.withOpacity(0.1),
-      appBar: AppBar(
-        elevation: 0,
-        title: Row(children: [
-          Image.asset(
-            Assets.logoIcon,
-            height: 50,
-          ),
-          const SizedBox(width: 10),
-          Text(
-            'Online Counsellor',
-            style: GoogleFonts.lobster(
-              fontSize: 30,
-              color: primaryColor,
-            ),
-          ),
-        ]),
-      ),
-      body: SingleChildScrollView(
+    return Container(
+      color: primaryColor.withOpacity(0.1),
+      child: SingleChildScrollView(
           child: Column(children: [
         Padding(
           padding: const EdgeInsets.all(10.0),

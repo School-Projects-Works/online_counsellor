@@ -137,7 +137,6 @@ class _MyAppState extends ConsumerState<MyApp> {
 
   void getToken() async {
     await FirebaseMessaging.instance.getToken().then((value) {
-      print('Token:============================ $value');
       ref.read(messageTokenProvider.notifier).state = value;
     });
   }

@@ -9,7 +9,10 @@ class SessionModel {
   String? counsellorImage;
   String? userName;
   String? userImage;
+  String? status;
+  int? endedAt;
   int? createdAt;
+  String? topic;
   SessionModel({
     this.id,
     this.userId,
@@ -18,7 +21,10 @@ class SessionModel {
     this.counsellorImage,
     this.userName,
     this.userImage,
+    this.status = 'Pending',
+    this.endedAt,
     this.createdAt,
+    this.topic,
   });
 
   SessionModel copyWith({
@@ -29,7 +35,10 @@ class SessionModel {
     String? counsellorImage,
     String? userName,
     String? userImage,
+    String? status,
+    int? endedAt,
     int? createdAt,
+    String? topic,
   }) {
     return SessionModel(
       id: id ?? this.id,
@@ -39,7 +48,10 @@ class SessionModel {
       counsellorImage: counsellorImage ?? this.counsellorImage,
       userName: userName ?? this.userName,
       userImage: userImage ?? this.userImage,
+      status: status ?? this.status,
+      endedAt: endedAt ?? this.endedAt,
       createdAt: createdAt ?? this.createdAt,
+      topic: topic ?? this.topic,
     );
   }
 
@@ -52,7 +64,10 @@ class SessionModel {
       'counsellorImage': counsellorImage,
       'userName': userName,
       'userImage': userImage,
+      'status': status,
+      'endedAt': endedAt,
       'createdAt': createdAt,
+      'topic': topic,
     };
   }
 
@@ -70,7 +85,10 @@ class SessionModel {
           : null,
       userName: map['userName'] != null ? map['userName'] as String : null,
       userImage: map['userImage'] != null ? map['userImage'] as String : null,
+      status: map['status'] != null ? map['status'] as String : null,
+      endedAt: map['endedAt'] != null ? map['endedAt'] as int : null,
       createdAt: map['createdAt'] != null ? map['createdAt'] as int : null,
+      topic: map['topic'] != null ? map['topic'] as String : null,
     );
   }
 
@@ -81,7 +99,7 @@ class SessionModel {
 
   @override
   String toString() {
-    return 'SessionModel(id: $id, userId: $userId, counsellorId: $counsellorId, counsellorName: $counsellorName, counsellorImage: $counsellorImage, userName: $userName, userImage: $userImage, createdAt: $createdAt)';
+    return 'SessionModel(id: $id, userId: $userId, counsellorId: $counsellorId, counsellorName: $counsellorName, counsellorImage: $counsellorImage, userName: $userName, userImage: $userImage, status: $status, endedAt: $endedAt, createdAt: $createdAt, topic: $topic)';
   }
 
   @override
@@ -95,7 +113,10 @@ class SessionModel {
         other.counsellorImage == counsellorImage &&
         other.userName == userName &&
         other.userImage == userImage &&
-        other.createdAt == createdAt;
+        other.status == status &&
+        other.endedAt == endedAt &&
+        other.createdAt == createdAt &&
+        other.topic == topic;
   }
 
   @override
@@ -107,6 +128,9 @@ class SessionModel {
         counsellorImage.hashCode ^
         userName.hashCode ^
         userImage.hashCode ^
-        createdAt.hashCode;
+        status.hashCode ^
+        endedAt.hashCode ^
+        createdAt.hashCode ^
+        topic.hashCode;
   }
 }

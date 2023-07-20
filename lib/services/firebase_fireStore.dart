@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:online_counsellor/models/appointment_model.dart';
 import 'package:online_counsellor/models/chat_model.dart';
+import 'package:online_counsellor/models/comment_model.dart';
+import 'package:online_counsellor/models/questions_model.dart';
 import 'package:online_counsellor/models/session_model.dart';
 import '../models/user_model.dart';
 
@@ -28,8 +30,13 @@ class FireStoreServices {
     await _fireStore.collection('users').doc(uid).update({'isOnline': bool});
   }
 
-  static getDocumentId(String s) {
-    return _fireStore.collection(s).doc().id;
+  static String getDocumentId(String s,
+      {CollectionReference<Map<String, dynamic>>? collection}) {
+    if (collection == null) {
+      return _fireStore.collection(s).doc().id;
+    } else {
+      return collection.doc().id;
+    }
   }
 
   static Future<List<Map<String, dynamic>>> getAllUsersMap() async {
@@ -97,5 +104,66 @@ class FireStoreServices {
 
   static createChat(ChatModel chat) {
     _fireStore.collection('chats').doc(chat.id).set(chat.toMap());
+  }
+
+  //get stream of all questions
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllQuestionsStream() {
+    return _fireStore.collection('questions').snapshots();
+  }
+
+  static Future<void> addQuestion(QuestionsModel state) async {
+    await _fireStore.collection('questions').doc(state.id).set(state.toMap());
+  }
+
+  static Future<void> updateQuestion(QuestionsModel state) async {
+    await _fireStore
+        .collection('questions')
+        .doc(state.id)
+        .update(state.updateMap());
+  }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getComments(String id) {
+    return _fireStore
+        .collection('questions')
+        .doc(id)
+        .collection('comments')
+        .orderBy('createdAt', descending: true)
+        .snapshots();
+  }
+
+  static saveComment(CommentModel state) {
+    _fireStore
+        .collection('questions')
+        .doc(state.postId)
+        .collection('comments')
+        .doc(state.id)
+        .set(state.toMap());
+  }
+
+  static void updateComment(CommentModel state) {
+    _fireStore
+        .collection('questions')
+        .doc(state.postId)
+        .collection('comments')
+        .doc(state.id)
+        .update(state.updateMap());
+  }
+
+  static deleteComment(String id, String postId) async {
+    await _fireStore
+        .collection('questions')
+        .doc(postId)
+        .collection('comments')
+        .doc(id)
+        .delete();
+  }
+
+  static Future<List<QuestionsModel>> getAllQuestions() async {
+    final questions = await _fireStore.collection('questions').get();
+    List<QuestionsModel> questionsList = [];
+    for (var element in questions.docs) {
+      questionsList.add(QuestionsModel.fromMap(element.data()));
+    }
+    return questionsList;
   }
 }

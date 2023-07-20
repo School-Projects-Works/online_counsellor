@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../models/user_model.dart';
 
@@ -51,6 +52,29 @@ List<UserModel> sortUsersByRating(List<UserModel> users) {
   users.sort((a, b) => b.rating!.compareTo(a.rating!));
   // return in descending order
   return users;
+}
+
+String getNumberOfTime(int dateTime) {
+  final now = DateTime.now();
+  final difference =
+      now.difference(DateTime.fromMillisecondsSinceEpoch(dateTime));
+  //get yesterday
+
+  if (difference.inDays > 0 && difference.inDays < 2) {
+    return "${difference.inDays} days ago";
+  } else if (difference.inHours > 0) {
+    return "${difference.inHours} hours ago";
+  } else if (difference.inMinutes > 0) {
+    return "${difference.inMinutes} minutes ago";
+  } else if (difference.inSeconds > 0) {
+    return "${difference.inSeconds} seconds ago";
+  } else if (difference.inSeconds == 0) {
+    return "Just now";
+  } else {
+    //return date with format EEE, MMM d, yyyy
+    return DateFormat('EEE, MMM d, yyyy')
+        .format(DateTime.fromMillisecondsSinceEpoch(dateTime));
+  }
 }
 
 //
