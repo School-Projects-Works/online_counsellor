@@ -8,7 +8,7 @@ import 'package:online_counsellor/presentation/pages/home/components/appointment
 import 'package:online_counsellor/presentation/pages/home/components/community/community_page.dart';
 import 'package:online_counsellor/presentation/pages/home/components/home_page.dart';
 import 'package:online_counsellor/presentation/pages/home/components/prohfile_page.dart';
-import 'package:online_counsellor/presentation/pages/home/components/session_page.dart';
+import 'package:online_counsellor/presentation/pages/home/components/session/session_page.dart';
 import 'package:online_counsellor/services/firebase_fireStore.dart';
 import 'package:online_counsellor/state/navigation_state.dart';
 import 'package:online_counsellor/styles/styles.dart';
@@ -28,7 +28,7 @@ class HomeMainPage extends ConsumerStatefulWidget {
 class _HomeMainState extends ConsumerState<HomeMainPage> {
   List<Widget> _buildScreens(bool isCounsellor) {
     return [
-      //if (!isCounsellor)
+      // if (!isCounsellor)
       const HomePage(),
       const CommunityPage(),
       const SessionPage(),
@@ -111,11 +111,11 @@ class _HomeMainState extends ConsumerState<HomeMainPage> {
                   gap: 8,
                   activeColor: primaryColor,
                   tabs: [
-                    if (userTypes != 'Counsellor')
-                      GButton(
-                        icon: MdiIcons.home,
-                        text: 'Home',
-                      ),
+                    // if (userTypes != 'Counsellor')
+                    GButton(
+                      icon: MdiIcons.home,
+                      text: 'Home',
+                    ),
                     GButton(
                       icon: MdiIcons.accountGroup,
                       text: 'Community',

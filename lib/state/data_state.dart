@@ -353,64 +353,17 @@ final appointmentStreamProvider =
   return FireStoreServices.getAppointmentStream(userId!, counsellorId!);
 });
 
-final currentSessionProvider =
-    StateNotifierProvider<CurrentSessionProvider, SessionModel>(
-        (ref) => CurrentSessionProvider());
-
-class CurrentSessionProvider extends StateNotifier<SessionModel> {
-  CurrentSessionProvider() : super(SessionModel());
-  void setCurrentSession(SessionModel session) {
-    state = session;
-  }
-
-  void bookSession(BuildContext context, WidgetRef ref) async {
-    CustomDialog.showLoading(message: 'Booking Session... Please wait');
-    var user = ref.watch(userProvider);
-    var counsellor = ref.watch(selectedCounsellorProvider);
-    state.id = '${user.id}_${counsellor!.id}';
-    state.counsellorId = counsellor.id;
-    state.counsellorName = counsellor.name;
-    state.counsellorImage = counsellor.profile;
-    state.userId = user.id;
-    state.userName = user.name;
-    state.userImage = user.profile;
-    state.createdAt = DateTime.now().toUtc().millisecondsSinceEpoch;
-    //check if user has booked session before
-    var hasBooked = await FireStoreServices.hasBookedSession(state);
-    if (hasBooked) {
-      CustomDialog.dismiss();
-      if (mounted) {
-        Navigator.pop(context);
-        sendToPage(context, const ChatPage());
-      }
-    } else {
-      final bool result = await FireStoreServices.bookSession(state);
-      if (result) {
-        // create new Chat....
-        var chat = ChatModel(
-          id: DateTime.now().toUtc().millisecondsSinceEpoch.toString(),
-          sessionId: state.id,
-          status: 'pending',
-          sessionDateTimestamp: DateTime.now().toUtc().millisecondsSinceEpoch,
-          userDeleted: false,
-          counsellorDeleted: false,
-        );
-        await FireStoreServices.createChat(chat);
-        CustomDialog.dismiss();
-        CustomDialog.showSuccess(
-          title: 'Success',
-          message: 'Session booked successfully',
-          onOkayPressed: () {
-            Navigator.pop(context);
-          },
-        );
-      } else {
-        CustomDialog.dismiss();
-        CustomDialog.showError(
-            title: 'Error', message: 'Could not book session');
-      }
-    }
-  }
-}
-
 final messageTokenProvider = StateProvider<String?>((ref) => null);
+
+final selectedCounsellorStreamProvider =
+    StreamProvider.autoDispose.family<UserModel?, String>((ref, id) async* {
+  var counsellor = FireStoreServices.getCounsellor(id);
+  ref.onDispose(() {
+    counsellor.drain();
+  });
+  var data = UserModel();
+  await for (var element in counsellor) {
+    data = UserModel.fromMap(element.data()!);
+    yield data;
+  }
+});

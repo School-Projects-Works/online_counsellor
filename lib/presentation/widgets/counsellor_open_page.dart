@@ -1,11 +1,17 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:online_counsellor/core/components/widgets/custom_button.dart';
+import 'package:online_counsellor/core/components/widgets/custom_drop_down.dart';
 import 'package:online_counsellor/models/user_model.dart';
 import 'package:online_counsellor/state/data_state.dart';
 import 'package:online_counsellor/styles/colors.dart';
 import 'package:online_counsellor/styles/styles.dart';
+
+import '../../core/components/constants/strings.dart';
+import '../../state/session_state.dart';
 
 class CounsellorViewPage extends ConsumerWidget {
   const CounsellorViewPage({super.key});
@@ -13,6 +19,7 @@ class CounsellorViewPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     UserModel? counsellor = ref.watch(selectedCounsellorProvider);
+    var stream = ref.watch(activeSessionStream(counsellor!.id!));
     return SafeArea(
       child: Scaffold(
           backgroundColor: Colors.black.withOpacity(0.5),
@@ -48,7 +55,7 @@ class CounsellorViewPage extends ConsumerWidget {
                         ],
                       ),
                       const SizedBox(height: 10),
-                      if (counsellor!.profile != null)
+                      if (counsellor.profile != null)
                         Image.network(
                           counsellor.profile!,
                           height: 300,
@@ -155,54 +162,95 @@ class CounsellorViewPage extends ConsumerWidget {
                       SizedBox(
                         height: 50,
                         child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Expanded(
-                                child: CustomButton(
-                                  color: secondaryColor,
-                                  text: 'Start Session',
-                                  onPressed: () {
-                                    ref
-                                        .read(currentSessionProvider.notifier)
-                                        .bookSession(context, ref);
-                                  },
-                                  icon: MdiIcons.chatProcessing,
-                                ),
+                                child: LayoutBuilder(
+                                    builder: (context, constraints) {
+                                  return stream.when(
+                                    loading: () => const SizedBox(
+                                        height: 20,
+                                        width: 20,
+                                        child: LinearProgressIndicator(
+                                          color: primaryColor,
+                                        )),
+                                    data: (data) {
+                                      if (data.isEmpty) {
+                                        return CustomButton(
+                                          color: secondaryColor,
+                                          text: 'Start Session',
+                                          onPressed: () {
+                                            setSessionTopic(
+                                                context, ref, counsellor);
+                                          },
+                                          icon: MdiIcons.chatProcessing,
+                                        );
+                                      } else {
+                                        return CustomButton(
+                                          color: secondaryColor,
+                                          text: 'Open Session',
+                                          onPressed: () {
+                                            ref
+                                                .read(currentSessionProvider
+                                                    .notifier)
+                                                .setCurrentSession(data[0]);
+                                          },
+                                          icon: MdiIcons.chatProcessing,
+                                        );
+                                      }
+                                    },
+                                    error: (error, stackTrace) => Center(
+                                      child: Text(
+                                        'Error',
+                                        style: normalText(
+                                            fontSize: 12, color: Colors.grey),
+                                      ),
+                                    ),
+                                  );
+                                }),
                               ),
                               const SizedBox(width: 10),
-                              LayoutBuilder(builder: (context, constraints) {
-                                var stream =
-                                    ref.watch(appointmentStreamProvider);
-                                return stream.when(
-                                  data: (data) {
-                                    if (data.docs.isEmpty) {
-                                      return CustomButton(
-                                        color: primaryColor,
-                                        text: 'Book Appoint.',
-                                        onPressed: () {
-                                          getDateTimes(
-                                              context, ref, counsellor);
-                                        },
-                                        icon: MdiIcons.calendarPlus,
-                                      );
-                                    } else {
-                                      return Text('Pending Appointment',
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style:
-                                              normalText(color: Colors.grey));
-                                    }
-                                  },
-                                  loading: () => const SizedBox(
-                                      height: 20,
-                                      width: 20,
-                                      child: CircularProgressIndicator(
-                                        color: primaryColor,
-                                      )),
-                                  error: (error, stackTrace) =>
-                                      Text(error.toString()),
-                                );
-                              }),
+                              Expanded(
+                                child: LayoutBuilder(
+                                    builder: (context, constraints) {
+                                  var stream =
+                                      ref.watch(appointmentStreamProvider);
+                                  return stream.when(
+                                    data: (data) {
+                                      if (data.docs.isEmpty) {
+                                        return CustomButton(
+                                          color: primaryColor,
+                                          text: 'Book Appoint.',
+                                          onPressed: () {
+                                            getDateTimes(
+                                                context, ref, counsellor);
+                                          },
+                                          icon: MdiIcons.calendarPlus,
+                                        );
+                                      } else {
+                                        return Text('Pending Appoint.',
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style:
+                                                normalText(color: Colors.grey));
+                                      }
+                                    },
+                                    loading: () => const SizedBox(
+                                        height: 20,
+                                        width: 20,
+                                        child: LinearProgressIndicator(
+                                          color: primaryColor,
+                                        )),
+                                    error: (error, stackTrace) => Center(
+                                      child: Text(
+                                        'error',
+                                        style: normalText(
+                                            fontSize: 12, color: Colors.grey),
+                                      ),
+                                    ),
+                                  );
+                                }),
+                              ),
                             ]),
                       ),
                       const SizedBox(height: 20),
@@ -211,6 +259,47 @@ class CounsellorViewPage extends ConsumerWidget {
             ),
           )),
     );
+  }
+
+  void setSessionTopic(
+      BuildContext context, WidgetRef ref, UserModel counsellor) {
+    // open bottom sheet to set session topic
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 40),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CustomDropDown(
+                    hintText: 'Select topic for the session',
+                    onChanged: (value) {
+                      ref
+                          .read(currentSessionProvider.notifier)
+                          .setTopic(value.toString());
+                    },
+                    items: counsellingTopicCategory
+                        .map((e) => DropdownMenuItem(
+                              value: e,
+                              child: Text(e),
+                            ))
+                        .toList()),
+                const SizedBox(height: 10),
+                CustomButton(
+                  color: primaryColor,
+                  text: 'Start Session',
+                  onPressed: () {
+                    ref
+                        .read(currentSessionProvider.notifier)
+                        .bookSession(context, ref);
+                  },
+                  icon: MdiIcons.chatProcessing,
+                ),
+              ],
+            ),
+          );
+        });
   }
 
   void getDateTimes(BuildContext context, WidgetRef ref, UserModel counsellor) {

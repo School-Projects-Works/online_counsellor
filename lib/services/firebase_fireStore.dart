@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:online_counsellor/models/appointment_model.dart';
 import 'package:online_counsellor/models/chat_model.dart';
 import 'package:online_counsellor/models/comment_model.dart';
 import 'package:online_counsellor/models/questions_model.dart';
+import 'package:online_counsellor/models/session_messages_model.dart';
 import 'package:online_counsellor/models/session_model.dart';
 import '../models/user_model.dart';
 
@@ -75,12 +75,18 @@ class FireStoreServices {
 
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAppointmentStream(
       String userId, String counsellorId) {
-    return _fireStore
-        .collection('appointments')
-        .where('counsellorId', isEqualTo: counsellorId)
-        .where('userId', isEqualTo: userId)
-        .where('status', isEqualTo: 'pending')
-        .snapshots();
+    try {
+      return _fireStore
+          .collection('appointments')
+          .where('counsellorId', isEqualTo: counsellorId)
+          .where('userId', isEqualTo: userId)
+          .where('status', isNotEqualTo: 'Ended')
+          .snapshots();
+    } on FirebaseException catch (e) {
+      print('Failed with error code: ${e.code}');
+      print(e.message);
+      return const Stream.empty();
+    }
   }
 
   static Future<bool> bookSession(SessionModel state) {
@@ -165,5 +171,70 @@ class FireStoreServices {
       questionsList.add(QuestionsModel.fromMap(element.data()));
     }
     return questionsList;
+  }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getActiveServices(
+      {String? userId, required String counsellorId}) {
+    try {
+      return _fireStore
+          .collection('sessions')
+          .where('counsellorId', isEqualTo: counsellorId)
+          .where('userId', isEqualTo: userId)
+          .where('status', isNotEqualTo: 'Ended')
+          .snapshots();
+    } on FirebaseException {
+      return const Stream.empty();
+    }
+  }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getUserSessions(
+      String? userId) {
+    try {
+      return _fireStore
+          .collection('sessions')
+          .where('userId', isEqualTo: userId)
+          .orderBy('createdAt', descending: true)
+          .snapshots();
+    } on FirebaseException {
+      return const Stream.empty();
+    }
+  }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getUserSessionsMessages(
+      String id) {
+    try {
+      return _fireStore
+          .collection('sessions')
+          .doc(id)
+          .collection('messages')
+          .orderBy('createdAt', descending: true)
+          .snapshots();
+    } on FirebaseException {
+      return const Stream.empty();
+    }
+  }
+
+  static Stream<DocumentSnapshot<Map<String, dynamic>>> getCounsellor(
+      String id) {
+    try {
+      return _fireStore.collection('users').doc(id).snapshots();
+    } on FirebaseException {
+      return const Stream.empty();
+    }
+  }
+
+  static Future<bool> addSessionMessages(
+      SessionMessagesModel messagesModel) async {
+    try {
+      await _fireStore
+          .collection('sessions')
+          .doc(messagesModel.sessionId)
+          .collection('messages')
+          .doc(messagesModel.id)
+          .set(messagesModel.toMap());
+      return true;
+    } on FirebaseException {
+      return false;
+    }
   }
 }
