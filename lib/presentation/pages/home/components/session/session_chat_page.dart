@@ -1,6 +1,4 @@
 import 'dart:io';
-import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,9 +7,9 @@ import 'package:online_counsellor/core/components/widgets/custom_input.dart';
 import 'package:online_counsellor/core/functions.dart';
 import 'package:online_counsellor/models/session_messages_model.dart';
 import 'package:online_counsellor/models/session_model.dart';
+import 'package:online_counsellor/presentation/pages/home/components/session/message_item.dart';
 import 'package:online_counsellor/services/firebase_fireStore.dart';
 import 'package:online_counsellor/styles/styles.dart';
-
 import '../../../../../state/data_state.dart';
 import '../../../../../state/session_state.dart';
 import '../../../../../styles/colors.dart';
@@ -137,53 +135,8 @@ class _SessionChatPageState extends ConsumerState<SessionChatPage> {
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
                   var message = data[index];
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      mainAxisAlignment: message.senderId == uid
-                          ? MainAxisAlignment.end
-                          : MainAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            if (message.senderId != uid)
-                              CircleAvatar(
-                                  backgroundImage: message.senderImage != null
-                                      ? NetworkImage(message.senderImage!)
-                                      : null),
-                            Container(
-                                padding: const EdgeInsets.all(10),
-                                constraints: BoxConstraints(
-                                    maxWidth:
-                                        MediaQuery.of(context).size.width *
-                                            0.7),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: message.senderId == uid
-                                        ? primaryColor.withOpacity(0.1)
-                                        : Colors.white),
-                                child: message.type == 'text'
-                                    ? Text(
-                                        message.message!,
-                                        style: normalText(
-                                          fontSize: 13,
-                                        ),
-                                      )
-                                    : message.type == 'image'
-                                        ? Image.network(
-                                            message.message!,
-                                            height: 250,
-                                            fit: BoxFit.cover,
-                                          )
-                                        : message.type == 'video'
-                                            ? Text('Video')
-                                            : Text('Audio')),
-                          ],
-                        )
-                      ],
-                    ),
+                  return MessageItem(
+                    message: message,
                   );
                 },
               );
@@ -226,7 +179,8 @@ class _SessionChatPageState extends ConsumerState<SessionChatPage> {
                                   openSourceBottomSheet(context, value,
                                       session: session);
                                 } else if (value == 'video') {
-                                  sendMessages(type: 'video', session: session);
+                                  openSourceBottomSheet(context, value,
+                                      session: session);
                                 }
                               },
                               itemBuilder: (context) {
@@ -370,8 +324,9 @@ class _SessionChatPageState extends ConsumerState<SessionChatPage> {
       if (type == 'image') {
         media = await picker.pickImage(
             source: ImageSource.camera, imageQuality: 90);
+        if (media == null) return;
         //convert to file
-        File file = File(media!.path);
+        File file = File(media.path);
         if (mounted) {
           sendToTransparentPage(context, ImagePreviewPage([file], session));
         }

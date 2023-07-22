@@ -77,8 +77,10 @@ class SessionItem extends ConsumerWidget {
             trailing: LayoutBuilder(builder: (context, constraints) {
               return sessionMessages.when(data: (data) {
                 // get data where is not read
-                var unreadMessages =
-                    data.where((element) => element.isRead == false).toList();
+                var unreadMessages = data
+                    .where((element) =>
+                        element.senderId != userId && element.isRead == false)
+                    .toList();
                 if (unreadMessages.isNotEmpty) {
                   return badges.Badge(
                     badgeContent: Text(

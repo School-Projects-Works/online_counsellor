@@ -33,7 +33,10 @@ dependencies:
   path_provider: ^2.0.15
   just_audio: ^0.9.34
   video_player: ^2.7.0
+  chewie: ^1.7.0
   mime: ^1.0.4
+  video_thumbnail: ^0.5.3
+  export_video_frame: ^0.0.7
 
 dev_dependencies:
   flutter_test:

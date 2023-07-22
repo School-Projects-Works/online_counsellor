@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -9,7 +7,6 @@ import 'package:online_counsellor/models/user_model.dart';
 import 'package:online_counsellor/state/data_state.dart';
 import 'package:online_counsellor/styles/colors.dart';
 import 'package:online_counsellor/styles/styles.dart';
-
 import '../../core/components/constants/strings.dart';
 import '../../state/session_state.dart';
 

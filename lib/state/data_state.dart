@@ -11,12 +11,9 @@ import 'package:online_counsellor/presentation/pages/authentication/sign_up_page
 import 'package:online_counsellor/services/other_services.dart';
 import '../core/components/widgets/smart_dialog.dart';
 import '../models/appointment_model.dart';
-import '../models/chat_model.dart';
 import '../models/quotes_model.dart';
-import '../models/session_model.dart';
 import '../models/user_model.dart';
 import '../presentation/pages/home/home_main.dart';
-import '../presentation/pages/home/pages/chart_page.dart';
 import '../services/firebase_auth.dart';
 import '../services/firebase_fireStore.dart';
 import '../services/firebase_storage.dart';

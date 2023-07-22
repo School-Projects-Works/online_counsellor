@@ -101,11 +101,13 @@ final sessionMessagesStreamProvider = StreamProvider.autoDispose
   ref.onDispose(() {
     sessions.drain();
   });
-  var data = <SessionMessagesModel>[];
-  await for (var element in sessions) {
-    data = element.docs
-        .map((e) => SessionMessagesModel.fromMap(e.data()))
-        .toList();
-    yield data;
-  }
+  try {
+    var data = <SessionMessagesModel>[];
+    await for (var element in sessions) {
+      data = element.docs
+          .map((e) => SessionMessagesModel.fromMap(e.data()))
+          .toList();
+      yield data;
+    }
+  } catch (e) {}
 });

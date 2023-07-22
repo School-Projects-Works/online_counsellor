@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:online_counsellor/models/appointment_model.dart';
 import 'package:online_counsellor/models/chat_model.dart';
@@ -82,9 +84,7 @@ class FireStoreServices {
           .where('userId', isEqualTo: userId)
           .where('status', isNotEqualTo: 'Ended')
           .snapshots();
-    } on FirebaseException catch (e) {
-      print('Failed with error code: ${e.code}');
-      print(e.message);
+    } on FirebaseException {
       return const Stream.empty();
     }
   }
@@ -207,7 +207,7 @@ class FireStoreServices {
           .collection('sessions')
           .doc(id)
           .collection('messages')
-          .orderBy('createdAt', descending: true)
+          .orderBy('createdAt', descending: false)
           .snapshots();
     } on FirebaseException {
       return const Stream.empty();

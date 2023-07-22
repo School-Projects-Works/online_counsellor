@@ -1,7 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:online_counsellor/core/components/constants/strings.dart';
 import 'package:online_counsellor/core/components/widgets/custom_input.dart';
@@ -11,7 +10,6 @@ import 'package:online_counsellor/presentation/widgets/counsellor_card.dart';
 import 'package:online_counsellor/state/data_state.dart';
 import 'package:online_counsellor/styles/styles.dart';
 
-import '../../../../generated/assets.dart';
 import '../../../../styles/colors.dart';
 
 class HomePage extends ConsumerStatefulWidget {
@@ -22,9 +20,9 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
-  FocusNode _focus = FocusNode();
+  final FocusNode _focus = FocusNode();
 
-  TextEditingController _controller = TextEditingController();
+  final TextEditingController _controller = TextEditingController();
 
   @override
   void initState() {
