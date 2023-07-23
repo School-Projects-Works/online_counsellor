@@ -1,8 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
-
 class SessionMessagesModel {
   String? id;
   String? message;
@@ -16,7 +14,7 @@ class SessionMessagesModel {
   int? createdAt;
   bool? isRead;
   String? type;
-  List<dynamic>? mediaFiles;
+  String? mediaFile;
   SessionMessagesModel({
     this.id,
     this.message,
@@ -30,7 +28,7 @@ class SessionMessagesModel {
     this.createdAt,
     this.isRead,
     this.type,
-    this.mediaFiles,
+    this.mediaFile,
   });
 
   SessionMessagesModel copyWith({
@@ -46,7 +44,7 @@ class SessionMessagesModel {
     int? createdAt,
     bool? isRead,
     String? type,
-    List<dynamic>? mediaFiles,
+    String? mediaFiles,
   }) {
     return SessionMessagesModel(
       id: id ?? this.id,
@@ -61,7 +59,7 @@ class SessionMessagesModel {
       createdAt: createdAt ?? this.createdAt,
       isRead: isRead ?? this.isRead,
       type: type ?? this.type,
-      mediaFiles: mediaFiles ?? this.mediaFiles,
+      mediaFile: mediaFiles ?? this.mediaFile,
     );
   }
 
@@ -79,7 +77,7 @@ class SessionMessagesModel {
       'createdAt': createdAt,
       'isRead': isRead,
       'type': type,
-      'mediaFiles': mediaFiles,
+      'mediaFiles': mediaFile,
     };
   }
 
@@ -102,9 +100,7 @@ class SessionMessagesModel {
       createdAt: map['createdAt'] != null ? map['createdAt'] as int : null,
       isRead: map['isRead'] != null ? map['isRead'] as bool : null,
       type: map['type'] != null ? map['type'] as String : null,
-      mediaFiles: map['mediaFiles'] != null
-          ? List<dynamic>.from((map['mediaFiles'] as List<dynamic>))
-          : null,
+      mediaFile: map['mediaFiles'] != null ? map['mediaFiles'] as String : null,
     );
   }
 
@@ -115,7 +111,7 @@ class SessionMessagesModel {
 
   @override
   String toString() {
-    return 'SessionMessagesModel(id: $id, message: $message, senderId: $senderId, receiverId: $receiverId, senderName: $senderName, receiverName: $receiverName, senderImage: $senderImage, receiverImage: $receiverImage, sessionId: $sessionId, createdAt: $createdAt, isRead: $isRead, type: $type, mediaFiles: $mediaFiles)';
+    return 'SessionMessagesModel(id: $id, message: $message, senderId: $senderId, receiverId: $receiverId, senderName: $senderName, receiverName: $receiverName, senderImage: $senderImage, receiverImage: $receiverImage, sessionId: $sessionId, createdAt: $createdAt, isRead: $isRead, type: $type, mediaFiles: $mediaFile)';
   }
 
   @override
@@ -134,7 +130,7 @@ class SessionMessagesModel {
         other.createdAt == createdAt &&
         other.isRead == isRead &&
         other.type == type &&
-        listEquals(other.mediaFiles, mediaFiles);
+        other.mediaFile == mediaFile;
   }
 
   @override
@@ -151,6 +147,6 @@ class SessionMessagesModel {
         createdAt.hashCode ^
         isRead.hashCode ^
         type.hashCode ^
-        mediaFiles.hashCode;
+        mediaFile.hashCode;
   }
 }

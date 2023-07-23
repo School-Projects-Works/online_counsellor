@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:online_counsellor/core/components/widgets/custom_button.dart';
 import 'package:online_counsellor/core/components/widgets/custom_drop_down.dart';
+import 'package:online_counsellor/core/functions.dart';
 import 'package:online_counsellor/models/user_model.dart';
+import 'package:online_counsellor/presentation/pages/home/components/session/session_chat_page.dart';
 import 'package:online_counsellor/state/data_state.dart';
 import 'package:online_counsellor/styles/colors.dart';
 import 'package:online_counsellor/styles/styles.dart';
@@ -191,6 +193,8 @@ class CounsellorViewPage extends ConsumerWidget {
                                                 .read(currentSessionProvider
                                                     .notifier)
                                                 .setCurrentSession(data[0]);
+                                            sendToPage(context,
+                                                const SessionChatPage());
                                           },
                                           icon: MdiIcons.chatProcessing,
                                         );

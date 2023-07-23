@@ -1,12 +1,9 @@
 import 'dart:io';
-
-import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:online_counsellor/models/session_messages_model.dart';
-import 'package:video_player/video_player.dart';
-import 'package:video_thumbnail/video_thumbnail.dart';
-
+import 'package:percent_indicator/percent_indicator.dart';
+import '../../../../../core/functions.dart';
 import '../../../../../state/data_state.dart';
 import '../../../../../styles/colors.dart';
 import '../../../../../styles/styles.dart';
@@ -20,60 +17,15 @@ class MessageItem extends ConsumerStatefulWidget {
 }
 
 class _MessageItemState extends ConsumerState<MessageItem> {
-  VideoPlayerController? _controller;
-  ChewieController? _chewieController;
-  @override
-  void dispose() {
-    super.dispose();
-    if (_controller != null && _controller!.value.isInitialized) {
-      _controller!.dispose();
-    }
-    if (_chewieController != null) {
-      _chewieController!.dispose();
-    }
-  }
-
   @override
   void initState() {
     super.initState();
-    if (widget.message!.mediaFiles != null &&
-        widget.message!.mediaFiles!.length == 1) initializeVideo();
-  }
-
-  initializeVideo() {
-    var file = widget.message!.mediaFiles![0];
-    var type = file['type'];
-    if (type!.contains('video')) {
-      _controller = VideoPlayerController.file(File(file['url']),
-          videoPlayerOptions: VideoPlayerOptions(
-              mixWithOthers: true, allowBackgroundPlayback: true))
-        ..initialize();
-      _chewieController = ChewieController(
-        videoPlayerController: _controller!,
-        aspectRatio: 0.9,
-        autoPlay: true,
-        autoInitialize: true,
-        looping: false,
-        showOptions: false,
-        allowFullScreen: false,
-        allowMuting: false,
-        errorBuilder: (context, errorMessage) {
-          return Center(
-            child: Text(
-              errorMessage,
-              style: const TextStyle(color: Colors.black),
-            ),
-          );
-        },
-      );
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     var message = widget.message;
     var uid = ref.watch(userProvider).id;
-
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
@@ -99,140 +51,173 @@ class _MessageItemState extends ConsumerState<MessageItem> {
                       color: message.senderId == uid
                           ? primaryColor.withOpacity(0.1)
                           : Colors.white),
-                  child: message.type == 'text'
-                      ? Text(
-                          message.message!,
-                          style: normalText(
-                            fontSize: 13,
-                          ),
-                        )
-                      : message.type == 'media'
-                          ? Column(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                if (message.mediaFiles!.length == 1)
-                                  if (message.mediaFiles![0]['type']
-                                      .contains('image'))
-                                    Image.network(
-                                      message.mediaFiles![0],
-                                      height: 250,
-                                      fit: BoxFit.cover,
-                                    ),
-                                if (message.mediaFiles!.length == 1)
-                                  if (message.mediaFiles![0]['type']
-                                      .contains('video'))
-                                    Expanded(
-                                      child: _chewieController != null
-                                          ? Chewie(
-                                              controller: _chewieController!,
-                                            )
-                                          : Container(
-                                              alignment: Alignment.center,
-                                              child: const SizedBox(
-                                                  height: 80,
-                                                  width: 80,
-                                                  child: Center(
-                                                      child:
-                                                          CircularProgressIndicator()))),
-                                    ),
-                                if (message.mediaFiles!.length > 1)
-                                  GridView.builder(
-                                    itemCount: message.mediaFiles!.length,
-                                    shrinkWrap: true,
-                                    gridDelegate:
-                                        const SliverGridDelegateWithFixedCrossAxisCount(
-                                            crossAxisCount: 2,
-                                            crossAxisSpacing: 5,
-                                            mainAxisSpacing: 2),
-                                    itemBuilder: (context, index) {
-                                      var file = message.mediaFiles![index];
-                                      if (file['type']!.contains('image')) {
-                                        return Container(
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              border: Border.all(
-                                                  color: secondaryColor,
-                                                  width: 2),
-                                              image: DecorationImage(
-                                                  image: NetworkImage(
-                                                      file['url']!),
-                                                  fit: BoxFit.cover)),
-                                        );
-                                      } else {
-                                        return FutureBuilder(
-                                            future:
-                                                genThumbnailFile(file['url']!),
-                                            builder: (context, snapshot) {
-                                              if (snapshot.connectionState ==
-                                                  ConnectionState.done) {
-                                                return Container(
-                                                    decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                                10),
-                                                        border: Border.all(
-                                                            color:
-                                                                secondaryColor,
-                                                            width: 2),
-                                                        image: DecorationImage(
-                                                            image: FileImage(
-                                                                snapshot.data
-                                                                    as File),
-                                                            fit: BoxFit.cover)),
-                                                    child: const Center(
-                                                        child: Icon(
-                                                      Icons.play_arrow,
-                                                      color: Colors.white,
-                                                      size: 24,
-                                                    )));
-                                              } else {
-                                                //loading
-                                                return Container(
-                                                    decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                      border: Border.all(
-                                                          color: secondaryColor,
-                                                          width: 2),
-                                                    ),
-                                                    child: const Center(
-                                                        child:
-                                                            CircularProgressIndicator()));
+                  child: Column(
+                    children: [
+                      message.type == 'text'
+                          ? Text(
+                              message.message!,
+                              style: normalText(
+                                fontSize: 13,
+                              ),
+                            )
+                          : message.type == 'image'
+                              ? InkWell(
+                                  onTap: () {
+                                    sendToTransparentPage(
+                                        context,
+                                        Container(
+                                          color: Colors.white.withOpacity(.8),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Image.network(
+                                                message.mediaFile!,
+                                                fit: BoxFit.contain,
+                                                loadingBuilder: (context, child,
+                                                    loadingProgress) {
+                                              if (loadingProgress == null) {
+                                                return child;
                                               }
-                                            });
-                                      }
-                                    },
-                                  ),
-                                Text(
-                                  message.message!,
-                                  style: normalText(
-                                    fontSize: 13,
+                                              return const Center(
+                                                child: SizedBox(
+                                                    height: 20,
+                                                    width: 20,
+                                                    child:
+                                                        CircularProgressIndicator()),
+                                              );
+                                            }),
+                                          ),
+                                        ));
+                                  },
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Image.network(
+                                        message.mediaFile!,
+                                        height: 250,
+                                        fit: BoxFit.cover,
+                                        loadingBuilder:
+                                            (context, child, loadingProgress) {
+                                          if (loadingProgress == null)
+                                            return child;
+                                          return const Center(
+                                            child: SizedBox(
+                                                height: 20,
+                                                width: 20,
+                                                child:
+                                                    CircularProgressIndicator()),
+                                          );
+                                        },
+                                      ),
+                                      Text(
+                                        message.message!,
+                                        style: normalText(
+                                          fontSize: 13,
+                                        ),
+                                      )
+                                    ],
                                   ),
                                 )
-                              ],
+                              : Row(
+                                  children: [
+                                    //play button when audio is not playing and pause button when audio is playing
+                                    InkWell(
+                                      onTap: () {
+                                        if (ref.watch(audioPlayerProvider)) {
+                                          ref
+                                              .read(
+                                                  audioPlayerProvider.notifier)
+                                              .pauseAudio();
+                                        } else {
+                                          ref
+                                              .read(
+                                                  audioPlayerProvider.notifier)
+                                              .playAudio(
+                                                  message.mediaFile!, ref);
+                                        }
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.all(2),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          border: Border.all(
+                                              color: primaryColor, width: 2),
+                                        ),
+                                        child: Icon(
+                                          ref.watch(audioPlayerProvider)
+                                              ? Icons.pause
+                                              : Icons.play_arrow,
+                                          color: primaryColor,
+                                          size: 24,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 5,
+                                    ),
+                                    Expanded(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 10),
+                                            child: Text(
+                                              '${ref.watch(audioPlayerDurationProvider).inMinutes}:${ref.watch(audioPlayerDurationProvider).inSeconds % 60}',
+                                              style: normalText(
+                                                fontSize: 13,
+                                              ),
+                                            ),
+                                          ),
+                                          LinearPercentIndicator(
+                                            lineHeight: 10,
+                                            percent: ref.watch(
+                                                audioPlayerTimerProvider),
+                                            progressColor: Colors.green,
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            message.createdAt != null
+                                ? getNumberOfTime(message.createdAt!)
+                                : '',
+                            style: normalText(
+                              fontSize: 10,
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 5,
+                          ),
+                          if (message.senderId == uid)
+                            Icon(
+                              message.isRead! ? Icons.done_all : Icons.done,
+                              size: 15,
+                              color:
+                                  message.isRead! ? primaryColor : Colors.grey,
                             )
-                          : message.type == 'video'
-                              ? const Text('Video')
-                              : const Text('Audio')),
+                        ],
+                      )
+                    ],
+                  )),
             ],
           )
         ],
       ),
     );
-  }
-
-  Future genThumbnailFile(String url) async {
-    final fileName = await VideoThumbnail.thumbnailFile(
-      video: url,
-      imageFormat: ImageFormat.JPEG,
-      maxHeight: 90,
-      quality: 90,
-    );
-    File file = File(fileName!);
-    return file;
   }
 }

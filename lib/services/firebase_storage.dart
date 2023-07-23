@@ -32,18 +32,13 @@ class CloudStorageServices {
     return url;
   }
 
-  static Future<List<Map<String, String>>> sedFiles(
-      List<Map<String, dynamic>> list, String id) async {
-    List<Map<String, String>> urls = [];
-    int time = DateTime.now().millisecondsSinceEpoch;
-    for (int i = 0; i < list.length; i++) {
-      final Reference storageReference =
-          _firebaseStorage.ref().child('files/$id/${time}_$i');
-      final UploadTask uploadTask = storageReference.putFile(list[i]['file']);
-      final TaskSnapshot taskSnapshot = await uploadTask;
-      final String url = await taskSnapshot.ref.getDownloadURL();
-      urls.add({'url': url, 'type': list[i]['type']});
-    }
-    return urls;
+  static Future<String> sendFile(File file, String id) async {
+    final Reference storageReference = _firebaseStorage
+        .ref()
+        .child('files/$id${DateTime.now().microsecondsSinceEpoch}');
+    final UploadTask uploadTask = storageReference.putFile(file);
+    final TaskSnapshot taskSnapshot = await uploadTask;
+    final String url = await taskSnapshot.ref.getDownloadURL();
+    return url;
   }
 }
