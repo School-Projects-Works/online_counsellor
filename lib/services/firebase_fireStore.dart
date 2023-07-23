@@ -11,7 +11,6 @@ import '../models/user_model.dart';
 
 class FireStoreServices {
   static final _fireStore = FirebaseFirestore.instance;
-
   static Future<UserModel?> getUser(String uid) async {
     final user = await _fireStore.collection('users').doc(uid).get();
     return UserModel.fromMap(user.data()!);
@@ -192,7 +191,7 @@ class FireStoreServices {
     try {
       return _fireStore
           .collection('sessions')
-          .where('userId', isEqualTo: userId)
+          .where('ids', arrayContains: userId)
           .orderBy('createdAt', descending: true)
           .snapshots();
     } on FirebaseException {
@@ -232,6 +231,75 @@ class FireStoreServices {
           .collection('messages')
           .doc(messagesModel.id)
           .set(messagesModel.toMap());
+      return true;
+    } on FirebaseException {
+      return false;
+    }
+  }
+
+  static Future<bool> updateSessionStatus(String id, String status) async {
+    try {
+      await _fireStore
+          .collection('sessions')
+          .doc(id)
+          .update({'status': status});
+      return true;
+    } on FirebaseException {
+      return false;
+    }
+  }
+
+  static updateSessionMessageReadStatus(
+      String sessionId, String messageId, bool bool) async {
+    await _fireStore
+        .collection('sessions')
+        .doc(sessionId)
+        .collection('messages')
+        .doc(messageId)
+        .update({'isRead': bool});
+  }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getUserAppointments(
+      String id) {
+    try {
+      return _fireStore
+          .collection('appointments')
+          .where('ids', arrayContains: id)
+          .snapshots();
+    } on FirebaseException {
+      return const Stream.empty();
+    }
+  }
+
+  static Stream<DocumentSnapshot<Map<String, dynamic>>> getSingleAppointment(
+      String id) {
+    try {
+      return _fireStore.collection('appointments').doc(id).snapshots();
+    } on FirebaseException {
+      return const Stream.empty();
+    }
+  }
+
+  static Future<void> rescheduleAppointment(AppointmentModel state) async {
+    await _fireStore
+        .collection('appointments')
+        .doc(state.id)
+        .update(state.rescheduleMap());
+  }
+
+  static updateAppointmentStatus(String s, String status) async {
+    await _fireStore
+        .collection('appointments')
+        .doc(s)
+        .update({'status': status});
+  }
+
+  static Future<bool> updateUser(UserModel state) async {
+    try {
+      await _fireStore
+          .collection('users')
+          .doc(state.id)
+          .update(state.updateUserMap());
       return true;
     } on FirebaseException {
       return false;

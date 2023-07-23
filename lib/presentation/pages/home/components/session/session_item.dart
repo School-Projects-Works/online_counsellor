@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:online_counsellor/core/components/widgets/smart_dialog.dart';
 import 'package:online_counsellor/models/session_model.dart';
 import 'package:online_counsellor/presentation/pages/home/components/session/session_chat_page.dart';
 import '../../../../../core/functions.dart';
@@ -21,11 +22,71 @@ class SessionItem extends ConsumerWidget {
     var sessionMessages = ref.watch(sessionMessagesStreamProvider(session.id!));
     return InkWell(
       onTap: () {
-        ref.read(selectedSessionProvider.notifier).setSelectedSession(session);
-        sendToPage(context, const SessionChatPage());
+        if (session.status!.toLowerCase() != 'rejected') {
+          if (session.status!.toLowerCase() == 'pending') {
+            if (userId == session.counsellorId) {
+              CustomDialog.showCustom(
+                  ui: Card(
+                color: Colors.white,
+                child: Container(
+                  color: Colors.white,
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text('Accept Session Request?'),
+                      const SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          ElevatedButton(
+                              onPressed: () {
+                                ref
+                                    .read(selectedSessionProvider.notifier)
+                                    .setSelectedSession(session);
+                                ref
+                                    .read(selectedSessionProvider.notifier)
+                                    .updateSessionStatus(session.id!, 'Active');
+                                CustomDialog.dismiss();
+                                sendToPage(context, const SessionChatPage());
+                              },
+                              child: const Text('Accept')),
+                          ElevatedButton(
+                              onPressed: () {
+                                ref
+                                    .read(selectedSessionProvider.notifier)
+                                    .updateSessionStatus(
+                                        session.id!, 'Rejected');
+                                CustomDialog.dismiss();
+                              },
+                              child: const Text('Reject'))
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ));
+            } else {
+              ref
+                  .read(selectedSessionProvider.notifier)
+                  .setSelectedSession(session);
+              sendToPage(context, const SessionChatPage());
+            }
+          } else {
+            ref
+                .read(selectedSessionProvider.notifier)
+                .setSelectedSession(session);
+            sendToPage(context, const SessionChatPage());
+          }
+        } else {
+          CustomDialog.showError(
+              title: 'Session Rejected',
+              message: 'This session has been rejected');
+        }
       },
       child: Container(
         padding: const EdgeInsets.only(left: 10, top: 8, bottom: 8, right: 15),
+        margin: const EdgeInsets.symmetric(vertical: 5),
         color: primaryColor.withOpacity(0.1),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 5),
@@ -112,7 +173,7 @@ class SessionItem extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(session.topic!),
+                    if (session.topic != null) Text(session.topic!),
                     Text(
                       getNumberOfTime(session.createdAt!),
                       style: normalText(fontSize: 13, color: Colors.grey),
@@ -126,7 +187,9 @@ class SessionItem extends ConsumerWidget {
                           ? Colors.red
                           : session.status!.toLowerCase() == 'pending'
                               ? Colors.grey
-                              : primaryColor),
+                              : session.status!.toLowerCase() == 'rejected'
+                                  ? Colors.red
+                                  : primaryColor),
                 )
               ],
             ),

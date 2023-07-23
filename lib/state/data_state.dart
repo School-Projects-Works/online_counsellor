@@ -151,6 +151,46 @@ class UserProvider extends StateNotifier<UserModel> {
       }
     }
   }
+
+  void updateUser(WidgetRef ref,
+      {File? imageFile,
+      required String name,
+      required String dob,
+      required String phone,
+      required String address,
+      required String city,
+      required String region,
+      required String about}) async {
+    CustomDialog.showLoading(message: 'Updating User... Please wait');
+    if (imageFile != null) {
+      final imageUrl =
+          await CloudStorageServices.saveUserImage(imageFile, state.id!);
+      state = state.copyWith(profile: imageUrl);
+    }
+    state = state.copyWith(
+        name: name,
+        dob: dob,
+        phone: phone,
+        address: address,
+        city: city,
+        region: region,
+        about: about);
+    var results = await FireStoreServices.updateUser(state);
+    if (results) {
+      CustomDialog.dismiss();
+      CustomDialog.showSuccess(
+        title: 'Success',
+        message: 'User updated successfully',
+      );
+      ref.read(userProfileIndexProvider.notifier).state = 0;
+    } else {
+      CustomDialog.dismiss();
+      CustomDialog.showError(
+        title: 'Error',
+        message: 'Error updating user',
+      );
+    }
+  }
 }
 
 final userSignInProvider = StateNotifierProvider<UserSignInProvider, User?>(
@@ -188,6 +228,8 @@ class UserSignInProvider extends StateNotifier<User?> {
             );
             return;
           } else {
+            //set user online status to true
+            await FireStoreServices.updateUserOnlineStatus(user.uid, true);
             //set user to provider
             CustomDialog.dismiss();
             ref.read(userProvider.notifier).setUser(userModel);
@@ -307,22 +349,22 @@ class CurrentAppointmentProvider extends StateNotifier<AppointmentModel> {
 
   void setDate(DateTime? value) {
     if (value == null) return;
-    var date = DateFormat('EEE dd, MMM yyyy').format(value);
-    state = state.copyWith(date: date);
+
+    state = state.copyWith(date: value.millisecondsSinceEpoch);
   }
 
   void setTime(TimeOfDay? value, BuildContext context) {
-    var time = value!.format(context);
-    state =
-        state.copyWith(time: '$time ${value.period.index == 0 ? 'AM' : 'PM'}');
+    if (value == null) return;
+    state = state.copyWith(time: value.toDateTime().millisecondsSinceEpoch);
   }
 
   void bookAppointment(BuildContext context, WidgetRef ref) async {
     CustomDialog.showLoading(message: 'Booking Appointment... Please wait');
     var user = ref.watch(userProvider);
     var counsellor = ref.watch(selectedCounsellorProvider);
-    state.id = '${user.id}_${counsellor!.id}';
-    state.counsellorId = counsellor.id;
+    state.id = FireStoreServices.getDocumentId('appointments');
+    state.counsellorId = counsellor!.id;
+    state.ids = [counsellor.id, user.id];
     state.counsellorName = counsellor.name;
     state.counsellorImage = counsellor.profile;
     state.userId = user.id;
@@ -331,7 +373,7 @@ class CurrentAppointmentProvider extends StateNotifier<AppointmentModel> {
     state.counsellorType = counsellor.counsellorType;
     state.counsellorState = false;
     state.userState = true;
-    state.status = 'pending';
+    state.status = 'Pending';
     state.createdAt = DateTime.now().toUtc().millisecondsSinceEpoch;
     final bool result = await FireStoreServices.bookAppointment(state);
     if (result) {
@@ -352,10 +394,25 @@ class CurrentAppointmentProvider extends StateNotifier<AppointmentModel> {
 }
 
 final appointmentStreamProvider =
-    StreamProvider.autoDispose<QuerySnapshot<Map<String, dynamic>>>((ref) {
+    StreamProvider.autoDispose<List<AppointmentModel>>((ref) async* {
   var userId = ref.watch(userProvider).id;
   var counsellorId = ref.watch(selectedCounsellorProvider)!.id;
-  return FireStoreServices.getAppointmentStream(userId!, counsellorId!);
+  var appointments =
+      FireStoreServices.getAppointmentStream(userId!, counsellorId!);
+  ref.onDispose(() {
+    appointments.drain();
+  });
+  try {
+    var data = <AppointmentModel>[];
+    await for (var element in appointments) {
+      data =
+          element.docs.map((e) => AppointmentModel.fromMap(e.data())).toList();
+      yield data
+          .where((element) =>
+              element.status == 'Pending' || element.status == 'Accepted')
+          .toList();
+    }
+  } catch (e) {}
 });
 
 final messageTokenProvider = StateProvider<String?>((ref) => null);
@@ -643,3 +700,5 @@ class AudioPlayerProvider extends StateNotifier<bool> {
 final audioPlayerDurationProvider =
     StateProvider<Duration>((ref) => const Duration());
 final audioPlayerTimerProvider = StateProvider<double>((ref) => 0.0);
+
+final userProfileIndexProvider = StateProvider<int>((ref) => 0);

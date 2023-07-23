@@ -4,10 +4,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:online_counsellor/core/functions.dart';
-import 'package:online_counsellor/presentation/pages/home/components/appointment_page.dart';
+import 'package:online_counsellor/presentation/pages/home/components/appointment/appointment_page.dart';
 import 'package:online_counsellor/presentation/pages/home/components/community/community_page.dart';
 import 'package:online_counsellor/presentation/pages/home/components/home_page.dart';
-import 'package:online_counsellor/presentation/pages/home/components/prohfile_page.dart';
 import 'package:online_counsellor/presentation/pages/home/components/session/session_page.dart';
 import 'package:online_counsellor/services/firebase_fireStore.dart';
 import 'package:online_counsellor/state/navigation_state.dart';
@@ -17,6 +16,7 @@ import '../../../services/firebase_auth.dart';
 import '../../../state/data_state.dart';
 import '../../../styles/colors.dart';
 import '../authentication/auth_main_page.dart';
+import '../profile/profile_page.dart';
 
 class HomeMainPage extends ConsumerStatefulWidget {
   const HomeMainPage({super.key});
@@ -28,12 +28,11 @@ class HomeMainPage extends ConsumerStatefulWidget {
 class _HomeMainState extends ConsumerState<HomeMainPage> {
   List<Widget> _buildScreens(bool isCounsellor) {
     return [
-      // if (!isCounsellor)
-      const HomePage(),
+      if (!isCounsellor) const HomePage(),
       const CommunityPage(),
       const SessionPage(),
       const AppointmentPage(),
-      const ProfilePage()
+      //const ProfilePage()
     ];
   }
 
@@ -75,7 +74,9 @@ class _HomeMainState extends ConsumerState<HomeMainPage> {
                           contentPadding: EdgeInsets.zero,
                           leading: const Icon(Icons.account_circle),
                           title: const Text('Profile'),
-                          onTap: () {},
+                          onTap: () {
+                            sendToPage(context, const ProfilePage());
+                          },
                         )),
                         PopupMenuItem(
                             child: ListTile(
@@ -111,11 +112,11 @@ class _HomeMainState extends ConsumerState<HomeMainPage> {
                   gap: 8,
                   activeColor: primaryColor,
                   tabs: [
-                    // if (userTypes != 'Counsellor')
-                    GButton(
-                      icon: MdiIcons.home,
-                      text: 'Home',
-                    ),
+                    if (userTypes != 'Counsellor')
+                      GButton(
+                        icon: MdiIcons.home,
+                        text: 'Home',
+                      ),
                     GButton(
                       icon: MdiIcons.accountGroup,
                       text: 'Community',

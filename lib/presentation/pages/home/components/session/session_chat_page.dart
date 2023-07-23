@@ -6,14 +6,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:online_counsellor/core/components/widgets/custom_input.dart';
+import 'package:online_counsellor/core/components/widgets/smart_dialog.dart';
 import 'package:online_counsellor/core/functions.dart';
 import 'package:online_counsellor/models/session_messages_model.dart';
 import 'package:online_counsellor/models/session_model.dart';
 import 'package:online_counsellor/presentation/pages/home/components/session/message_item.dart';
 import 'package:online_counsellor/services/firebase_fireStore.dart';
 import 'package:online_counsellor/styles/styles.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:simple_ripple_animation/simple_ripple_animation.dart';
 import '../../../../../state/data_state.dart';
 import '../../../../../state/session_state.dart';
 import '../../../../../styles/colors.dart';
@@ -35,6 +34,12 @@ class _SessionChatPageState extends ConsumerState<SessionChatPage> {
   final record = Record();
   //create timer
   Timer? timer;
+  @override
+  void initState() {
+    //check if widget is build
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,20 +52,26 @@ class _SessionChatPageState extends ConsumerState<SessionChatPage> {
     return Scaffold(
       appBar: AppBar(
         actions: [
-          PopupMenuButton(
-              icon: const Icon(Icons.more_vert),
-              itemBuilder: (context) {
-                return [
-                  const PopupMenuItem(
-                    value: 'End Session',
-                    child: Text('End Session'),
-                  ),
-                  const PopupMenuItem(
-                    value: 'Report Counsellor',
-                    child: Text('Report Counsellor'),
-                  ),
-                ];
-              }),
+          if (session.status == 'Active')
+            PopupMenuButton(
+                icon: const Icon(Icons.more_vert),
+                onSelected: (value) {
+                  if (value == 'End Session') {
+                    showEndSessionDialog(session);
+                  }
+                },
+                itemBuilder: (context) {
+                  return [
+                    const PopupMenuItem(
+                      value: 'End Session',
+                      child: Text('End Session'),
+                    ),
+                    const PopupMenuItem(
+                      value: 'Report Counsellor',
+                      child: Text('Report Counsellor'),
+                    ),
+                  ];
+                }),
           const SizedBox(width: 5)
         ],
         title: Column(
@@ -135,43 +146,67 @@ class _SessionChatPageState extends ConsumerState<SessionChatPage> {
             ),
           ),
           const SizedBox(height: 10),
-          Expanded(
-            child: sessionMessages.when(data: (data) {
-              if (data.isEmpty) {
-                return const Center(child: Text('No messages yet'));
-              }
-              return ListView.builder(
-                itemCount: data.length,
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  var message = data[index];
-                  return MessageItem(
-                    message: message,
-                  );
-                },
-              );
-            }, error: (error, stackTrace) {
-              return Center(
-                  child: Text(
-                'Something went wrong',
-                style: normalText(color: Colors.grey),
-              ));
-            }, loading: () {
-              return const Center(
-                  child: SizedBox(
-                      width: 45,
-                      height: 45,
-                      child: CircularProgressIndicator()));
-            }),
-          ),
+          if (session.status != 'Pending')
+            Expanded(
+              child: sessionMessages.when(data: (data) {
+                if (data.isEmpty) {
+                  return const Center(child: Text('No messages yet'));
+                }
+                //get all chat messages where isRead is false and senderId is not equal to current user id and update isRead to true
+                List<SessionMessagesModel> unreadMessages = [];
+                sessionMessages.whenData((data) {
+                  unreadMessages = data
+                      .where((element) =>
+                          element.isRead == false &&
+                          element.senderId != ref.watch(userProvider).id)
+                      .toList();
+                });
+                //update isRead to true
+                updateMessage(unreadMessages, session.id!);
+                return ListView.builder(
+                  itemCount: data.length,
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    var message = data[index];
+                    return MessageItem(
+                      message: message,
+                    );
+                  },
+                );
+              }, error: (error, stackTrace) {
+                return Center(
+                    child: Text(
+                  'Something went wrong',
+                  style: normalText(color: Colors.grey),
+                ));
+              }, loading: () {
+                return const Center(
+                    child: SizedBox(
+                        width: 45,
+                        height: 45,
+                        child: CircularProgressIndicator()));
+              }),
+            ),
           if (session.status == 'Ended')
             Center(
-                child: Text(
-              'Session has ended',
-              style:
-                  normalText(color: primaryColor, fontWeight: FontWeight.bold),
+                child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child: Text(
+                'Session has ended',
+                style: normalText(
+                    color: primaryColor, fontWeight: FontWeight.bold),
+              ),
             )),
-          if (session.status != 'Ended')
+          if (session.status == 'Pending')
+            Expanded(
+              child: Center(
+                  child: Text(
+                'Session is pending acceptance',
+                style:
+                    normalText(color: Colors.red, fontWeight: FontWeight.bold),
+              )),
+            ),
+          if (session.status == 'Active')
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               child: Row(
@@ -207,7 +242,7 @@ class _SessionChatPageState extends ConsumerState<SessionChatPage> {
                                 },
                                 icon: Icon(MdiIcons.microphoneMessage,
                                     color: primaryColor, size: 25)),
-                          if (message.isNotEmpty)
+                          if (message.isNotEmpty && sending == false)
                             IconButton(
                                 padding: EdgeInsets.zero,
                                 onPressed: () {
@@ -230,7 +265,11 @@ class _SessionChatPageState extends ConsumerState<SessionChatPage> {
     );
   }
 
+  bool sending = false;
   void sendMessages({String? type, required SessionModel session}) async {
+    setState(() {
+      sending = true;
+    });
     var uid = ref.watch(userProvider).id;
     var receiverId =
         uid == session.userId ? session.counsellorId! : session.userId;
@@ -260,6 +299,7 @@ class _SessionChatPageState extends ConsumerState<SessionChatPage> {
       setState(() {
         _controller.clear();
         message = '';
+        sending = false;
       });
     }
   }
@@ -316,6 +356,42 @@ class _SessionChatPageState extends ConsumerState<SessionChatPage> {
       File file = File(media.path);
       if (mounted) {
         sendToTransparentPage(context, ImagePreviewPage(file, session));
+      }
+    }
+  }
+
+  void showEndSessionDialog(SessionModel session) {
+    CustomDialog.showInfo(
+        title: 'End Session',
+        message:
+            'Are you sure you want to end this session? This action cannot be undone',
+        onConfirmText: 'End',
+        onConfirm: () {
+          endSession(session);
+        });
+  }
+
+  void endSession(SessionModel session) async {
+    CustomDialog.dismiss();
+    CustomDialog.showLoading(message: 'Ending Session...');
+    var result =
+        await FireStoreServices.updateSessionStatus(session.id!, 'Ended');
+    if (result) {
+      CustomDialog.dismiss();
+      CustomDialog.showSuccess(title: 'Success', message: 'Session Ended');
+      //pop page
+      if (mounted) {
+        Navigator.pop(context);
+      }
+    }
+  }
+
+  void updateMessage(
+      List<SessionMessagesModel> unreadMessages, String id) async {
+    if (unreadMessages.isNotEmpty) {
+      for (var message in unreadMessages) {
+        await FireStoreServices.updateSessionMessageReadStatus(
+            id, message.id!, true);
       }
     }
   }

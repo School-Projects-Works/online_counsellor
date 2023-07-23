@@ -50,15 +50,17 @@ class _MessageItemState extends ConsumerState<MessageItem> {
                       borderRadius: BorderRadius.circular(10),
                       color: message.senderId == uid
                           ? primaryColor.withOpacity(0.1)
-                          : Colors.white),
+                          : secondaryColor.withOpacity(0.1)),
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       message.type == 'text'
                           ? Text(
                               message.message!,
                               style: normalText(
-                                fontSize: 13,
-                              ),
+                                  fontSize: 14, fontWeight: FontWeight.w700),
                             )
                           : message.type == 'image'
                               ? InkWell(
@@ -100,8 +102,9 @@ class _MessageItemState extends ConsumerState<MessageItem> {
                                         fit: BoxFit.cover,
                                         loadingBuilder:
                                             (context, child, loadingProgress) {
-                                          if (loadingProgress == null)
+                                          if (loadingProgress == null) {
                                             return child;
+                                          }
                                           return const Center(
                                             child: SizedBox(
                                                 height: 20,
@@ -189,8 +192,10 @@ class _MessageItemState extends ConsumerState<MessageItem> {
                         height: 5,
                       ),
                       Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.end,
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: message.senderId == uid
+                            ? MainAxisAlignment.end
+                            : MainAxisAlignment.start,
                         children: [
                           Text(
                             message.createdAt != null

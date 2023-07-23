@@ -13,6 +13,7 @@ class CounsellorCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var size = MediaQuery.of(context).size;
+
     return GestureDetector(
       onTap: () {
         ref.read(selectedCounsellorProvider.notifier).state = user;
@@ -21,7 +22,7 @@ class CounsellorCard extends ConsumerWidget {
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
         padding: const EdgeInsets.all(10),
-        width: size.width * 0.8,
+        width: size.width * 0.95,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           color: Colors.white,

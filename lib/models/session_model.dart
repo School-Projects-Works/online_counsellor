@@ -1,9 +1,12 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
+
 class SessionModel {
   String? id;
   String? userId;
+  List<dynamic>? ids;
   String? counsellorId;
   String? counsellorName;
   String? counsellorImage;
@@ -16,6 +19,7 @@ class SessionModel {
   SessionModel({
     this.id,
     this.userId,
+    this.ids,
     this.counsellorId,
     this.counsellorName,
     this.counsellorImage,
@@ -30,6 +34,7 @@ class SessionModel {
   SessionModel copyWith({
     String? id,
     String? userId,
+    List<dynamic>? ids,
     String? counsellorId,
     String? counsellorName,
     String? counsellorImage,
@@ -43,6 +48,7 @@ class SessionModel {
     return SessionModel(
       id: id ?? this.id,
       userId: userId ?? this.userId,
+      ids: ids ?? this.ids,
       counsellorId: counsellorId ?? this.counsellorId,
       counsellorName: counsellorName ?? this.counsellorName,
       counsellorImage: counsellorImage ?? this.counsellorImage,
@@ -59,6 +65,7 @@ class SessionModel {
     return <String, dynamic>{
       'id': id,
       'userId': userId,
+      'ids': ids,
       'counsellorId': counsellorId,
       'counsellorName': counsellorName,
       'counsellorImage': counsellorImage,
@@ -75,6 +82,9 @@ class SessionModel {
     return SessionModel(
       id: map['id'] != null ? map['id'] as String : null,
       userId: map['userId'] != null ? map['userId'] as String : null,
+      ids: map['ids'] != null
+          ? List<dynamic>.from((map['ids'] as List<dynamic>))
+          : null,
       counsellorId:
           map['counsellorId'] != null ? map['counsellorId'] as String : null,
       counsellorName: map['counsellorName'] != null
@@ -99,7 +109,7 @@ class SessionModel {
 
   @override
   String toString() {
-    return 'SessionModel(id: $id, userId: $userId, counsellorId: $counsellorId, counsellorName: $counsellorName, counsellorImage: $counsellorImage, userName: $userName, userImage: $userImage, status: $status, endedAt: $endedAt, createdAt: $createdAt, topic: $topic)';
+    return 'SessionModel(id: $id, userId: $userId, ids: $ids, counsellorId: $counsellorId, counsellorName: $counsellorName, counsellorImage: $counsellorImage, userName: $userName, userImage: $userImage, status: $status, endedAt: $endedAt, createdAt: $createdAt, topic: $topic)';
   }
 
   @override
@@ -108,6 +118,7 @@ class SessionModel {
 
     return other.id == id &&
         other.userId == userId &&
+        listEquals(other.ids, ids) &&
         other.counsellorId == counsellorId &&
         other.counsellorName == counsellorName &&
         other.counsellorImage == counsellorImage &&
@@ -123,6 +134,7 @@ class SessionModel {
   int get hashCode {
     return id.hashCode ^
         userId.hashCode ^
+        ids.hashCode ^
         counsellorId.hashCode ^
         counsellorName.hashCode ^
         counsellorImage.hashCode ^

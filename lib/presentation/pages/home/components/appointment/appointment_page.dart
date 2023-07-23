@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:online_counsellor/core/components/widgets/custom_input.dart';
-import 'package:online_counsellor/presentation/pages/home/components/session/session_item.dart';
-import 'package:online_counsellor/state/session_state.dart';
-import 'package:online_counsellor/styles/styles.dart';
-import '../../../../../state/data_state.dart';
+import '../../../../../core/components/widgets/custom_input.dart';
+import '../../../../../state/appointemt_data_state.dart';
 import '../../../../../styles/colors.dart';
+import '../../../../../styles/styles.dart';
+import 'appointment_card.dart';
 
-class SessionPage extends ConsumerStatefulWidget {
-  const SessionPage({super.key});
+class AppointmentPage extends ConsumerStatefulWidget {
+  const AppointmentPage({super.key});
 
   @override
-  ConsumerState<SessionPage> createState() => _SessionPageState();
+  ConsumerState<AppointmentPage> createState() => _AppointmentPageState();
 }
 
-class _SessionPageState extends ConsumerState<SessionPage> {
+class _AppointmentPageState extends ConsumerState<AppointmentPage> {
   final FocusNode _focus = FocusNode();
 
   final TextEditingController _controller = TextEditingController();
@@ -39,52 +38,50 @@ class _SessionPageState extends ConsumerState<SessionPage> {
 
   @override
   Widget build(BuildContext context) {
-    var sessions = ref.watch(sessionsStreamProvider);
+    var appointments = ref.watch(appointmentStreamProvider);
     return SafeArea(
         child: Scaffold(
-            body: sessions.when(
+            body: appointments.when(
                 data: (data) {
                   return ListTile(
                     contentPadding: const EdgeInsets.symmetric(horizontal: 10),
                     title: CustomTextFields(
                       controller: _controller,
-                      hintText: 'search session',
+                      hintText: 'search appointment',
                       focusNode: _focus,
                       suffixIcon: _focus.hasFocus
                           ? IconButton(
                               onPressed: () {
                                 setState(() {
                                   _controller.clear();
-                                  ref.read(sessionSearchQuery.notifier).state =
-                                      '';
+                                  ref
+                                      .read(appointmentSearchQuery.notifier)
+                                      .state = '';
                                   _focus.unfocus();
                                 });
                               },
                               icon: Icon(MdiIcons.close, color: primaryColor))
                           : Icon(MdiIcons.magnify, color: primaryColor),
                       onChanged: (value) {
-                        ref.read(sessionSearchQuery.notifier).state = value;
+                        ref.read(appointmentSearchQuery.notifier).state = value;
                       },
                     ),
                     subtitle: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 30),
                       child: _focus.hasFocus
                           ? LayoutBuilder(builder: (context, constraint) {
-                              //get user id
-                              var use = ref.watch(userProvider).id;
-
-                              var list = ref.watch(searchSessionProvider(use!));
+                              var list = ref.watch(searchAppointmentProvider);
                               if (list.isNotEmpty) {
                                 return ListView.builder(
                                   padding: const EdgeInsets.only(bottom: 150),
                                   itemCount: list.length,
                                   itemBuilder: (context, index) {
-                                    return SessionItem(list[index]);
+                                    return AppointmentCard(list[index].id!);
                                   },
                                 );
                               } else {
                                 return Center(
-                                    child: Text('No Sessions Found',
+                                    child: Text('No Appointment Found',
                                         style: normalText()));
                               }
                             })
@@ -92,11 +89,11 @@ class _SessionPageState extends ConsumerState<SessionPage> {
                               ? ListView.builder(
                                   itemCount: data.length,
                                   itemBuilder: (context, index) {
-                                    var session = data[index];
-                                    return SessionItem(session);
+                                    var appointment = data[index];
+                                    return AppointmentCard(appointment.id!);
                                   })
                               : Center(
-                                  child: Text('No Session Found',
+                                  child: Text('No Appointment Found',
                                       style: normalText())),
                     ),
                   );
