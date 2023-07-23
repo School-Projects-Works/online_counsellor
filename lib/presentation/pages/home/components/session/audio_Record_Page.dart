@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -24,10 +26,8 @@ class _AudioRecordPageState extends ConsumerState<AudioRecordPage> {
   Widget build(BuildContext context) {
     var timer = ref.watch(audioRecordingTimerProvider);
     var file = ref.watch(audioRecordingProvider);
-    var uid = ref.watch(userProvider).id;
     var session = ref.watch(selectedSessionProvider);
-    var selectedUser = ref.watch(selectedCounsellorStreamProvider(
-        uid == session.userId ? session.counsellorId! : session.userId!));
+
     bool isPlaying = ref.watch(isPlayingProvider);
     var playingTimer = ref.watch(playingTimerProvider);
     return Scaffold(

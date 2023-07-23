@@ -44,7 +44,7 @@ class SessionMessagesModel {
     int? createdAt,
     bool? isRead,
     String? type,
-    String? mediaFiles,
+    String? mediaFile,
   }) {
     return SessionMessagesModel(
       id: id ?? this.id,
@@ -59,7 +59,7 @@ class SessionMessagesModel {
       createdAt: createdAt ?? this.createdAt,
       isRead: isRead ?? this.isRead,
       type: type ?? this.type,
-      mediaFile: mediaFiles ?? this.mediaFile,
+      mediaFile: mediaFile ?? this.mediaFile,
     );
   }
 

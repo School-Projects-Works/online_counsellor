@@ -32,16 +32,9 @@ class _MyAppState extends ConsumerState<MyApp> {
   Future<bool> _initUser() async {
     ref.watch(quotesProvider.notifier).getQuotes();
     ref.watch(counsellorsProvider.notifier).getCounsellors();
-    // //get all uses from firestore and add update their rating with random number
-    // List<Map<String, dynamic>> users = await FireStoreServices.getAllUsersMap();
-    // for (Map<String, dynamic> user in users) {
-    //   await FireStoreServices.updateUserRating(user['id'], getRandomRating());
-    // }
-    //await FirebaseAuthService.signOut();
+
     if (FirebaseAuthService.isUserLogin()) {
       User user = FirebaseAuthService.getCurrentUser();
-
-      //set user isOnline to true in firestore
       await FireStoreServices.updateUserOnlineStatus(user.uid, true);
       UserModel? userModel = await FireStoreServices.getUser(user.uid);
       if (userModel != null) {

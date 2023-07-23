@@ -1,7 +1,7 @@
+// ignore_for_file: empty_catches
+
 import 'dart:async';
-import 'dart:ffi';
 import 'dart:io';
-import 'dart:math';
 import 'package:just_audio/just_audio.dart';
 import 'package:online_counsellor/models/session_model.dart';
 import 'package:path_provider/path_provider.dart';
@@ -10,7 +10,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:online_counsellor/core/components/constants/strings.dart';
 import 'package:online_counsellor/core/functions.dart';
 import 'package:online_counsellor/presentation/pages/authentication/sign_up_page.dart';
@@ -494,9 +493,7 @@ class AudioRecordingProvider extends StateNotifier<File?> {
               .setTimer(AudioTimer(minutes: minutes, seconds: seconds));
         });
       }
-    } catch (e) {
-      print(e);
-    }
+    } catch (e) {}
   }
 
   // pause recording
@@ -675,11 +672,11 @@ class AudioPlayerProvider extends StateNotifier<bool> {
     // get duration  stream
     player.positionStream.listen((event) {
       ref.read(audioPlayerDurationProvider.notifier).state = event;
-      var _currAudioPlaying = event.inMicroseconds.ceilToDouble();
-      final _currTime = (_currAudioPlaying /
+      var currAudioPlaying = event.inMicroseconds.ceilToDouble();
+      final currTime = (currAudioPlaying /
           (player.duration?.inMicroseconds.ceilToDouble() ?? 1.0));
       ref.read(audioPlayerTimerProvider.notifier).state =
-          _currTime > 1.0 ? 1.0 : _currTime;
+          currTime > 1.0 ? 1.0 : currTime;
     });
     player.playerStateStream.listen((event) {
       if (event.processingState == ProcessingState.completed) {

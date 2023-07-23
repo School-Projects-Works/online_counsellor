@@ -242,7 +242,7 @@ class CounsellorViewPage extends ConsumerWidget {
                                       )),
                                   error: (error, stackTrace) {
                                     //throw error
-                                    print(error);
+
                                     return Center(
                                       child: Text(
                                         'error',
