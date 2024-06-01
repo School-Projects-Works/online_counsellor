@@ -31,7 +31,7 @@ class _SessionChatPageState extends ConsumerState<SessionChatPage> {
   String message = '';
   final TextEditingController _controller = TextEditingController();
   final ImagePicker picker = ImagePicker();
-  final record = Record();
+  final recrd = Record();
   //create timer
   Timer? timer;
   @override

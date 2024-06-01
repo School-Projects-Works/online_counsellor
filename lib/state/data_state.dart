@@ -480,9 +480,12 @@ class AudioRecordingProvider extends StateNotifier<File?> {
         // Start recording
         await record.start(
           path: directoryPath,
-          encoder: AudioEncoder.wav, // by default
-          bitRate: 128000, // by default
+
+            encoder: AudioEncoder.wav, // by default
+            bitRate: 128000, // by default
           samplingRate: 44100, // by default
+
+
         );
         timer = Timer.periodic(const Duration(seconds: 1), (timer) {
           var time = timer.tick;

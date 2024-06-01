@@ -37,8 +37,7 @@ class CustomDialog {
   }) {
     SmartDialog.showToast(
       message,
-      alignment:
-          AlignmentGeometry.lerp(Alignment.center, Alignment.bottomCenter, 0.5),
+      alignment: Alignment.center,
       builder: (context) => Container(
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
