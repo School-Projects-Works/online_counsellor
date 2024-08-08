@@ -28,7 +28,7 @@ class _ProfileViewPageState extends ConsumerState<ProfileViewPage> {
           //circle avatar image
           CircleAvatar(
             radius: 50,
-            backgroundImage: NetworkImage(user.profile!),
+            backgroundImage: NetworkImage(user.profile),
           ),
           const SizedBox(height: 15),
           //edit and logout buttons
@@ -50,7 +50,7 @@ class _ProfileViewPageState extends ConsumerState<ProfileViewPage> {
           ),
           const SizedBox(height: 20),
           //user name, email and phone number
-          Text(user.name ?? '',
+          Text(user.name,
               style: normalText(fontSize: 20, fontWeight: FontWeight.bold)),
 
           //show user type
@@ -58,20 +58,20 @@ class _ProfileViewPageState extends ConsumerState<ProfileViewPage> {
               style:
                   normalText(fontWeight: FontWeight.bold, color: primaryColor)),
           const SizedBox(height: 5),
-          Text(user.email ?? '',
+          Text(user.email,
               style: normalText(
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
                   color: Colors.grey)),
           const SizedBox(height: 5),
-          Text(user.phone ?? '',
+          Text(user.phone,
               style: normalText(
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
                   color: Colors.grey)),
           const SizedBox(height: 20),
           //show date of birth, address, city
-          if (user.dob != null)
+          if (user.dob.isNotEmpty)
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -80,7 +80,7 @@ class _ProfileViewPageState extends ConsumerState<ProfileViewPage> {
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
                         color: Colors.grey)),
-                Text(user.dob ?? '',
+                Text(user.dob,
                     style: normalText(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
@@ -96,7 +96,7 @@ class _ProfileViewPageState extends ConsumerState<ProfileViewPage> {
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
                       color: Colors.grey)),
-              Text(user.address ?? '',
+              Text(user.address,
                   style: normalText(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
@@ -112,7 +112,7 @@ class _ProfileViewPageState extends ConsumerState<ProfileViewPage> {
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
                       color: Colors.grey)),
-              Text(user.city ?? '',
+              Text(user.city,
                   style: normalText(
                       fontSize: 15,
                       fontWeight: FontWeight.bold,
@@ -137,12 +137,12 @@ class _ProfileViewPageState extends ConsumerState<ProfileViewPage> {
                         fontSize: 16,
                         fontWeight: FontWeight.bold)),
                 const SizedBox(width: 5),
-                for (var i = 0; i < user.rating!.toInt(); i++)
+                for (var i = 0; i < user.rating.toInt(); i++)
                   const Icon(Icons.star, color: primaryColor, size: 16),
               ],
             ),
           //user bio
-          Text(user.about ?? '',
+          Text(user.about,
               maxLines: 5,
               style: normalText(
                   fontSize: 15,
@@ -154,7 +154,7 @@ class _ProfileViewPageState extends ConsumerState<ProfileViewPage> {
   }
 
   void signOut(UserModel user) async {
-    await FireStoreServices.updateUserOnlineStatus(user.id!, false);
+    await FireStoreServices.updateUserOnlineStatus(user.id, false);
     await FirebaseAuthService.signOut();
     if (mounted) {
       noReturnSendToPage(context, const AuthMainPage());

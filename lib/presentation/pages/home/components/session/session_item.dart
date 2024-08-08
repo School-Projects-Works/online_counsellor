@@ -18,12 +18,12 @@ class SessionItem extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var userId = ref.watch(userProvider).id;
     var selectedUser = ref.watch(selectedCounsellorStreamProvider(
-        userId == session.userId ? session.counsellorId! : session.userId!));
-    var sessionMessages = ref.watch(sessionMessagesStreamProvider(session.id!));
+        userId == session.userId ? session.counsellorId : session.userId));
+    var sessionMessages = ref.watch(sessionMessagesStreamProvider(session.id));
     return InkWell(
       onTap: () {
-        if (session.status!.toLowerCase() != 'rejected') {
-          if (session.status!.toLowerCase() == 'pending') {
+        if (session.status.toLowerCase() != 'rejected') {
+          if (session.status.toLowerCase() == 'pending') {
             if (userId == session.counsellorId) {
               CustomDialog.showCustom(
                   ui: Card(
@@ -46,7 +46,7 @@ class SessionItem extends ConsumerWidget {
                                     .setSelectedSession(session);
                                 ref
                                     .read(selectedSessionProvider.notifier)
-                                    .updateSessionStatus(session.id!, 'Active');
+                                    .updateSessionStatus(session.id, 'Active');
                                 CustomDialog.dismiss();
                                 sendToPage(context, const SessionChatPage());
                               },
@@ -56,7 +56,7 @@ class SessionItem extends ConsumerWidget {
                                 ref
                                     .read(selectedSessionProvider.notifier)
                                     .updateSessionStatus(
-                                        session.id!, 'Rejected');
+                                        session.id, 'Rejected');
                                 CustomDialog.dismiss();
                               },
                               child: const Text('Reject'))
@@ -94,19 +94,19 @@ class SessionItem extends ConsumerWidget {
             contentPadding: EdgeInsets.zero,
             leading: CircleAvatar(
                 backgroundImage: userId == session.userId
-                    ? session.counsellorImage != null
-                        ? NetworkImage(session.counsellorImage!)
+                    ? session.counsellorImage.isNotEmpty
+                        ? NetworkImage(session.counsellorImage)
                         : null
-                    : session.userImage != null
-                        ? NetworkImage(session.userImage!)
+                    : session.userImage.isNotEmpty
+                        ? NetworkImage(session.userImage)
                         : null),
             title: Row(
               children: [
                 Expanded(
                   child: Text(
                     userId == session.userId
-                        ? session.counsellorName!
-                        : session.userName!,
+                        ? session.counsellorName
+                        : session.userName,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style:
@@ -115,7 +115,7 @@ class SessionItem extends ConsumerWidget {
                 ),
                 selectedUser.when(data: (data) {
                   if (data != null) {
-                    String status = data.isOnline! ? 'Online' : 'Offline';
+                    String status = data.isOnline ? 'Online' : 'Offline';
                     return Text(
                       status,
                       style: normalText(
@@ -173,21 +173,21 @@ class SessionItem extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (session.topic != null) Text(session.topic!),
+                    if (session.topic.isNotEmpty) Text(session.topic),
                     Text(
-                      getNumberOfTime(session.createdAt!),
+                      getNumberOfTime(session.createdAt),
                       style: normalText(fontSize: 13, color: Colors.grey),
                     )
                   ],
                 ),
                 Text(
-                  session.status!,
+                  session.status,
                   style: normalText(
-                      color: session.status!.toLowerCase() == 'ended'
+                      color: session.status.toLowerCase() == 'ended'
                           ? Colors.red
-                          : session.status!.toLowerCase() == 'pending'
+                          : session.status.toLowerCase() == 'pending'
                               ? Colors.grey
-                              : session.status!.toLowerCase() == 'rejected'
+                              : session.status.toLowerCase() == 'rejected'
                                   ? Colors.red
                                   : primaryColor),
                 )

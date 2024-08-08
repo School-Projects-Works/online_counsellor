@@ -89,7 +89,7 @@ class _AudioRecordPageState extends ConsumerState<AudioRecordPage> {
                     onTap: () {
                       ref
                           .read(audioRecordingProvider.notifier)
-                          .startRecording(session.id!, ref);
+                          .startRecording(session.id, ref);
                     },
                     child: Container(
                       padding: const EdgeInsets.all(5),
@@ -106,7 +106,7 @@ class _AudioRecordPageState extends ConsumerState<AudioRecordPage> {
                     onTap: () {
                       ref
                           .read(audioRecordingProvider.notifier)
-                          .stopRecording(session.id!, ref);
+                          .stopRecording(session.id, ref);
                     },
                     child: Container(
                       padding: const EdgeInsets.all(5),

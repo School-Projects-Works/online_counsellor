@@ -4,37 +4,53 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 
 class SessionModel {
-  String? id;
-  String? userId;
-  List<dynamic>? ids;
-  String? counsellorId;
-  String? counsellorName;
-  String? counsellorImage;
-  String? userName;
-  String? userImage;
-  String? status;
-  int? endedAt;
-  int? createdAt;
-  String? topic;
+  String id;
+  String userId;
+  List<String> ids;
+  String counsellorId;
+  String counsellorName;
+  String counsellorImage;
+  String userName;
+  String userImage;
+  String status;
+  int endedAt;
+  int createdAt;
+  String topic;
   SessionModel({
-    this.id,
-    this.userId,
-    this.ids,
-    this.counsellorId,
-    this.counsellorName,
-    this.counsellorImage,
-    this.userName,
-    this.userImage,
-    this.status = 'Pending',
-    this.endedAt,
-    this.createdAt,
-    this.topic,
+    required this.id,
+    required this.userId,
+    required this.ids,
+    required this.counsellorId,
+    required this.counsellorName,
+    required this.counsellorImage,
+    required this.userName,
+    required this.userImage,
+    required this.status,
+    required this.endedAt,
+    required this.createdAt,
+    required this.topic,
   });
-
+  
+  static SessionModel defualt(){
+    return SessionModel(
+      id: '',
+      userId: '',
+      ids: [],
+      counsellorId: '',
+      counsellorName: '',
+      counsellorImage: '',
+      userName: '',
+      userImage: '',
+      status: '',
+      endedAt: 0,
+      createdAt: 0,
+      topic: '',
+    );
+  }
   SessionModel copyWith({
     String? id,
     String? userId,
-    List<dynamic>? ids,
+    List<String>? ids,
     String? counsellorId,
     String? counsellorName,
     String? counsellorImage,
@@ -62,50 +78,44 @@ class SessionModel {
   }
 
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'id': id,
-      'userId': userId,
-      'ids': ids,
-      'counsellorId': counsellorId,
-      'counsellorName': counsellorName,
-      'counsellorImage': counsellorImage,
-      'userName': userName,
-      'userImage': userImage,
-      'status': status,
-      'endedAt': endedAt,
-      'createdAt': createdAt,
-      'topic': topic,
-    };
+    final result = <String, dynamic>{};
+  
+    result.addAll({'id': id});
+    result.addAll({'userId': userId});
+    result.addAll({'ids': ids});
+    result.addAll({'counsellorId': counsellorId});
+    result.addAll({'counsellorName': counsellorName});
+    result.addAll({'counsellorImage': counsellorImage});
+    result.addAll({'userName': userName});
+    result.addAll({'userImage': userImage});
+    result.addAll({'status': status});
+    result.addAll({'endedAt': endedAt});
+    result.addAll({'createdAt': createdAt});
+    result.addAll({'topic': topic});
+  
+    return result;
   }
 
   factory SessionModel.fromMap(Map<String, dynamic> map) {
     return SessionModel(
-      id: map['id'] != null ? map['id'] as String : null,
-      userId: map['userId'] != null ? map['userId'] as String : null,
-      ids: map['ids'] != null
-          ? List<dynamic>.from((map['ids'] as List<dynamic>))
-          : null,
-      counsellorId:
-          map['counsellorId'] != null ? map['counsellorId'] as String : null,
-      counsellorName: map['counsellorName'] != null
-          ? map['counsellorName'] as String
-          : null,
-      counsellorImage: map['counsellorImage'] != null
-          ? map['counsellorImage'] as String
-          : null,
-      userName: map['userName'] != null ? map['userName'] as String : null,
-      userImage: map['userImage'] != null ? map['userImage'] as String : null,
-      status: map['status'] != null ? map['status'] as String : null,
-      endedAt: map['endedAt'] != null ? map['endedAt'] as int : null,
-      createdAt: map['createdAt'] != null ? map['createdAt'] as int : null,
-      topic: map['topic'] != null ? map['topic'] as String : null,
+      id: map['id'] ?? '',
+      userId: map['userId'] ?? '',
+      ids: List<String>.from(map['ids']),
+      counsellorId: map['counsellorId'] ?? '',
+      counsellorName: map['counsellorName'] ?? '',
+      counsellorImage: map['counsellorImage'] ?? '',
+      userName: map['userName'] ?? '',
+      userImage: map['userImage'] ?? '',
+      status: map['status'] ?? '',
+      endedAt: map['endedAt']?.toInt() ?? 0,
+      createdAt: map['createdAt']?.toInt() ?? 0,
+      topic: map['topic'] ?? '',
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory SessionModel.fromJson(String source) =>
-      SessionModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory SessionModel.fromJson(String source) => SessionModel.fromMap(json.decode(source));
 
   @override
   String toString() {
@@ -113,21 +123,22 @@ class SessionModel {
   }
 
   @override
-  bool operator ==(covariant SessionModel other) {
+  bool operator ==(Object other) {
     if (identical(this, other)) return true;
-
-    return other.id == id &&
-        other.userId == userId &&
-        listEquals(other.ids, ids) &&
-        other.counsellorId == counsellorId &&
-        other.counsellorName == counsellorName &&
-        other.counsellorImage == counsellorImage &&
-        other.userName == userName &&
-        other.userImage == userImage &&
-        other.status == status &&
-        other.endedAt == endedAt &&
-        other.createdAt == createdAt &&
-        other.topic == topic;
+  
+    return other is SessionModel &&
+      other.id == id &&
+      other.userId == userId &&
+      listEquals(other.ids, ids) &&
+      other.counsellorId == counsellorId &&
+      other.counsellorName == counsellorName &&
+      other.counsellorImage == counsellorImage &&
+      other.userName == userName &&
+      other.userImage == userImage &&
+      other.status == status &&
+      other.endedAt == endedAt &&
+      other.createdAt == createdAt &&
+      other.topic == topic;
   }
 
   @override

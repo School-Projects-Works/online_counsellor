@@ -68,11 +68,11 @@ class _PersonalInfoState extends ConsumerState<PersonalInfo> {
     // wait for widget to build before calling the function
     WidgetsBinding.instance.addPostFrameCallback((_) {
       var user = ref.read(userProvider);
-      _nameController.text = user.name ?? '';
-      _emailController.text = user.email ?? '';
-      _passwordController.text = user.password ?? '';
-      _dobController.text = user.dob ?? '';
-      _aboutController.text = user.about ?? '';
+      _nameController.text = user.name;
+      _emailController.text = user.email ;
+      _passwordController.text = user.password ;
+      _dobController.text = user.dob;
+      _aboutController.text = user.about ;
     });
   }
 
@@ -332,9 +332,9 @@ class _AddressInfoState extends ConsumerState<AddressInfo> {
     // wait for widget to build before calling the function
     WidgetsBinding.instance.addPostFrameCallback((_) {
       var user = ref.read(userProvider);
-      _phoneController.text = user.phone ?? '';
-      _addressController.text = user.address ?? '';
-      _cityController.text = user.city ?? '';
+      _phoneController.text = user.phone ;
+      _addressController.text = user.address;
+      _cityController.text = user.city ;
     });
   }
 
@@ -410,7 +410,7 @@ class _AddressInfoState extends ConsumerState<AddressInfo> {
                     height: 20,
                   ),
                   CustomDropDown(
-                      value: ref.read(userProvider).region,
+                      value: ref.read(userProvider).region.isEmpty?null: ref.read(userProvider).region,
                       onChanged: (region) {
                         ref.read(userProvider.notifier).setUserRegion(region!);
                       },

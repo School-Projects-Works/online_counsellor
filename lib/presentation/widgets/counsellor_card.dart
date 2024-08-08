@@ -34,9 +34,9 @@ class CounsellorCard extends ConsumerWidget {
               width: 100,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                image: user.profile != null
+                image: user.profile.isNotEmpty
                     ? DecorationImage(
-                        image: NetworkImage(user.profile!),
+                        image: NetworkImage(user.profile),
                         fit: BoxFit.fill,
                       )
                     : null,
@@ -55,7 +55,7 @@ class CounsellorCard extends ConsumerWidget {
                         fontSize: 18,
                         fontWeight: FontWeight.bold)),
                 const SizedBox(height: 2),
-                Text(user.name ?? "Name",
+                Text(user.name,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
@@ -63,18 +63,18 @@ class CounsellorCard extends ConsumerWidget {
                         fontSize: 16,
                         fontWeight: FontWeight.bold)),
                 const SizedBox(height: 2),
-                Text(user.email ?? "Email",
+                Text(user.email,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style:
                         const TextStyle(color: Colors.black45, fontSize: 14)),
                 const SizedBox(height: 2),
-                Text(user.phone ?? "Phone Number",
+                Text(user.phone,
                     style:
                         const TextStyle(color: Colors.black45, fontSize: 14)),
                 const SizedBox(height: 2),
                 Text(
-                    '${user.address ?? "Address"}, ${user.city ?? "City"}, ${user.region ?? "Region"}',
+                    '${user.address}, ${user.city}, ${user.region}',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style:
@@ -90,7 +90,7 @@ class CounsellorCard extends ConsumerWidget {
                             fontSize: 16,
                             fontWeight: FontWeight.bold)),
                     const SizedBox(width: 5),
-                    for (var i = 0; i < user.rating!.toInt(); i++)
+                    for (var i = 0; i < user.rating.toInt(); i++)
                       const Icon(Icons.star, color: primaryColor, size: 16),
                   ],
                 )

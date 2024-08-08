@@ -4,43 +4,62 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 
 class AppointmentModel {
-  String? id;
-  String? userId;
-  List<dynamic>? ids;
-  String? counsellorId;
-  int? date;
-  int? time;
-  String? status;
-  String? counsellorName;
-  String? counsellorImage;
-  String? counsellorType;
-  String? userImage;
-  String? userName;
-  bool? counsellorState;
-  bool? userState;
-  int? createdAt;
+  String id;
+  String userId;
+  List<String> ids;
+  String counsellorId;
+  int date;
+  int time;
+  String status;
+  String counsellorName;
+  String counsellorImage;
+  String counsellorType;
+  String userImage;
+  String userName;
+  bool counsellorState;
+  bool userState;
+  int createdAt;
   AppointmentModel({
-    this.id,
-    this.userId,
-    this.ids,
-    this.counsellorId,
-    this.date,
-    this.time,
-    this.status = 'Pending',
-    this.counsellorName,
-    this.counsellorImage,
-    this.counsellorType,
-    this.userImage,
-    this.userName,
-    this.counsellorState,
-    this.userState,
-    this.createdAt,
+    required this.id,
+    required this.userId,
+    required this.ids,
+    required this.counsellorId,
+    required this.date,
+    required this.time,
+    required this.status,
+    required this.counsellorName,
+    required this.counsellorImage,
+    required this.counsellorType,
+    required this.userImage,
+    required this.userName,
+    required this.counsellorState,
+    required this.userState,
+    required this.createdAt,
   });
-
+  
+  static AppointmentModel defualt(){
+    return AppointmentModel(
+      id: '',
+      userId: '',
+      ids: [],
+      counsellorId: '',
+      date: 0,
+      time: 0,
+      status: '',
+      counsellorName: '',
+      counsellorImage: '',
+      counsellorType: '',
+      userImage: '',
+      userName: '',
+      counsellorState: false,
+      userState: false,
+      createdAt: 0,
+    );
+  }
   AppointmentModel copyWith({
     String? id,
     String? userId,
-    List<dynamic>? ids,
+    List<String>? ids,
     String? counsellorId,
     int? date,
     int? time,
@@ -74,60 +93,50 @@ class AppointmentModel {
   }
 
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'id': id,
-      'userId': userId,
-      'ids': ids,
-      'counsellorId': counsellorId,
-      'date': date,
-      'time': time,
-      'status': status,
-      'counsellorName': counsellorName,
-      'counsellorImage': counsellorImage,
-      'counsellorType': counsellorType,
-      'userImage': userImage,
-      'userName': userName,
-      'counsellorState': counsellorState,
-      'userState': userState,
-      'createdAt': createdAt,
-    };
+    final result = <String, dynamic>{};
+  
+    result.addAll({'id': id});
+    result.addAll({'userId': userId});
+    result.addAll({'ids': ids});
+    result.addAll({'counsellorId': counsellorId});
+    result.addAll({'date': date});
+    result.addAll({'time': time});
+    result.addAll({'status': status});
+    result.addAll({'counsellorName': counsellorName});
+    result.addAll({'counsellorImage': counsellorImage});
+    result.addAll({'counsellorType': counsellorType});
+    result.addAll({'userImage': userImage});
+    result.addAll({'userName': userName});
+    result.addAll({'counsellorState': counsellorState});
+    result.addAll({'userState': userState});
+    result.addAll({'createdAt': createdAt});
+  
+    return result;
   }
 
   factory AppointmentModel.fromMap(Map<String, dynamic> map) {
     return AppointmentModel(
-      id: map['id'] != null ? map['id'] as String : null,
-      userId: map['userId'] != null ? map['userId'] as String : null,
-      ids: map['ids'] != null
-          ? List<dynamic>.from((map['ids'] as List<dynamic>))
-          : null,
-      counsellorId:
-          map['counsellorId'] != null ? map['counsellorId'] as String : null,
-      date: map['date'] != null ? map['date'] as int : null,
-      time: map['time'] != null ? map['time'] as int : null,
-      status: map['status'] != null ? map['status'] as String : null,
-      counsellorName: map['counsellorName'] != null
-          ? map['counsellorName'] as String
-          : null,
-      counsellorImage: map['counsellorImage'] != null
-          ? map['counsellorImage'] as String
-          : null,
-      counsellorType: map['counsellorType'] != null
-          ? map['counsellorType'] as String
-          : null,
-      userImage: map['userImage'] != null ? map['userImage'] as String : null,
-      userName: map['userName'] != null ? map['userName'] as String : null,
-      counsellorState: map['counsellorState'] != null
-          ? map['counsellorState'] as bool
-          : null,
-      userState: map['userState'] != null ? map['userState'] as bool : null,
-      createdAt: map['createdAt'] != null ? map['createdAt'] as int : null,
+      id: map['id'] ?? '',
+      userId: map['userId'] ?? '',
+      ids: List<String>.from(map['ids']),
+      counsellorId: map['counsellorId'] ?? '',
+      date: map['date']?.toInt() ?? 0,
+      time: map['time']?.toInt() ?? 0,
+      status: map['status'] ?? '',
+      counsellorName: map['counsellorName'] ?? '',
+      counsellorImage: map['counsellorImage'] ?? '',
+      counsellorType: map['counsellorType'] ?? '',
+      userImage: map['userImage'] ?? '',
+      userName: map['userName'] ?? '',
+      counsellorState: map['counsellorState'] ?? false,
+      userState: map['userState'] ?? false,
+      createdAt: map['createdAt']?.toInt() ?? 0,
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory AppointmentModel.fromJson(String source) =>
-      AppointmentModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory AppointmentModel.fromJson(String source) => AppointmentModel.fromMap(json.decode(source));
 
   @override
   String toString() {
@@ -135,24 +144,25 @@ class AppointmentModel {
   }
 
   @override
-  bool operator ==(covariant AppointmentModel other) {
+  bool operator ==(Object other) {
     if (identical(this, other)) return true;
-
-    return other.id == id &&
-        other.userId == userId &&
-        listEquals(other.ids, ids) &&
-        other.counsellorId == counsellorId &&
-        other.date == date &&
-        other.time == time &&
-        other.status == status &&
-        other.counsellorName == counsellorName &&
-        other.counsellorImage == counsellorImage &&
-        other.counsellorType == counsellorType &&
-        other.userImage == userImage &&
-        other.userName == userName &&
-        other.counsellorState == counsellorState &&
-        other.userState == userState &&
-        other.createdAt == createdAt;
+  
+    return other is AppointmentModel &&
+      other.id == id &&
+      other.userId == userId &&
+      listEquals(other.ids, ids) &&
+      other.counsellorId == counsellorId &&
+      other.date == date &&
+      other.time == time &&
+      other.status == status &&
+      other.counsellorName == counsellorName &&
+      other.counsellorImage == counsellorImage &&
+      other.counsellorType == counsellorType &&
+      other.userImage == userImage &&
+      other.userName == userName &&
+      other.counsellorState == counsellorState &&
+      other.userState == userState &&
+      other.createdAt == createdAt;
   }
 
   @override

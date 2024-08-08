@@ -11,7 +11,7 @@ import 'data_state.dart';
 final appointmentStreamProvider =
     StreamProvider<List<AppointmentModel>>((ref) async* {
   var userId = ref.watch(userProvider).id;
-  var appointments = FireStoreServices.getUserAppointments(userId!);
+  var appointments = FireStoreServices.getUserAppointments(userId);
   ref.onDispose(() {
     appointments.drain();
   });
@@ -33,12 +33,12 @@ final searchAppointmentProvider = StateProvider<List<AppointmentModel>>((ref) {
   appointments.whenData((value) {
     data = value
         .where((element) =>
-            element.counsellorName!.toLowerCase().contains(query) ||
-            element.counsellorType!.toLowerCase().contains(query) ||
-            element.userName!.toLowerCase().contains(query) ||
-            element.status!.toLowerCase().contains(query) ||
-            getDateFromDate(element.date!).toLowerCase().contains(query) ||
-            getTimeFromDate(element.time!).toLowerCase().contains(query))
+            element.counsellorName.toLowerCase().contains(query) ||
+            element.counsellorType.toLowerCase().contains(query) ||
+            element.userName.toLowerCase().contains(query) ||
+            element.status.toLowerCase().contains(query) ||
+            getDateFromDate(element.date).toLowerCase().contains(query) ||
+            getTimeFromDate(element.time).toLowerCase().contains(query))
         .toList();
   });
   return data;
@@ -51,7 +51,7 @@ final singleAppointmentStreamProvider = StreamProvider.autoDispose
     appointments.drain();
   });
   try {
-    var data = AppointmentModel();
+    var data = AppointmentModel.defualt();
     await for (var element in appointments) {
       data = AppointmentModel.fromMap(element.data() as Map<String, dynamic>);
       yield data;
@@ -64,7 +64,7 @@ final selectedAppointmentProvider =
         (ref) => SelectedAppointment());
 
 class SelectedAppointment extends StateNotifier<AppointmentModel> {
-  SelectedAppointment() : super(AppointmentModel());
+  SelectedAppointment() : super(AppointmentModel.defualt());
   void setAppointment(AppointmentModel appointment) {
     state = appointment;
   }
@@ -98,7 +98,7 @@ class SelectedAppointment extends StateNotifier<AppointmentModel> {
   void updateAppointment(String status) {
     CustomDialog.dismiss();
     CustomDialog.showLoading(message: 'Updating appointment...');
-    FireStoreServices.updateAppointmentStatus(state.id!, status).then((value) {
+    FireStoreServices.updateAppointmentStatus(state.id, status).then((value) {
       CustomDialog.dismiss();
       CustomDialog.showSuccess(
         title: 'Success',

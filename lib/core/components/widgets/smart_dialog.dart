@@ -134,8 +134,8 @@ class CustomDialog {
                         onPressed: () => SmartDialog.dismiss(),
                         style: ButtonStyle(
                           backgroundColor:
-                              MaterialStateProperty.all(Colors.transparent),
-                          padding: MaterialStateProperty.all(
+                              WidgetStateProperty.all(Colors.transparent),
+                          padding: WidgetStateProperty.all(
                               const EdgeInsets.all(10)),
                         ),
                         child: Text(
@@ -222,8 +222,8 @@ class CustomDialog {
                         },
                         style: ButtonStyle(
                           backgroundColor:
-                              MaterialStateProperty.all(Colors.transparent),
-                          padding: MaterialStateProperty.all(
+                              WidgetStateProperty.all(Colors.transparent),
+                          padding: WidgetStateProperty.all(
                               const EdgeInsets.all(10)),
                         ),
                         child: Text(
@@ -312,9 +312,9 @@ class CustomDialog {
                       onPressed: onConfirm,
                       style: ButtonStyle(
                         backgroundColor:
-                            MaterialStateProperty.all(Colors.transparent),
+                            WidgetStateProperty.all(Colors.transparent),
                         padding:
-                            MaterialStateProperty.all(const EdgeInsets.all(10)),
+                            WidgetStateProperty.all(const EdgeInsets.all(10)),
                       ),
                       child: Text(
                         onConfirmText,
@@ -333,9 +333,9 @@ class CustomDialog {
                       onPressed: () => SmartDialog.dismiss(),
                       style: ButtonStyle(
                         backgroundColor:
-                            MaterialStateProperty.all(Colors.transparent),
+                            WidgetStateProperty.all(Colors.transparent),
                         padding:
-                            MaterialStateProperty.all(const EdgeInsets.all(10)),
+                            WidgetStateProperty.all(const EdgeInsets.all(10)),
                       ),
                       child: Text(
                         buttonText2 ?? 'Cancel',

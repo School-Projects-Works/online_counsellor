@@ -73,7 +73,7 @@ class _SessionPageState extends ConsumerState<SessionPage> {
                               //get user id
                               var use = ref.watch(userProvider).id;
 
-                              var list = ref.watch(searchSessionProvider(use!));
+                              var list = ref.watch(searchSessionProvider(use));
                               if (list.isNotEmpty) {
                                 return ListView.builder(
                                   padding: const EdgeInsets.only(bottom: 150),

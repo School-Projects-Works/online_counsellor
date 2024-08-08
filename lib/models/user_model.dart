@@ -2,55 +2,84 @@
 
 import 'dart:convert';
 import 'dart:math';
+
+import 'package:faker/faker.dart';
 import 'package:online_counsellor/core/components/constants/strings.dart';
 
 class UserModel {
-  String? id;
-  String? email;
-  String? password;
-  String? name;
-  String? profile;
-  String? phone;
-  String? address;
-  String? city;
-  String? region;
-  bool? isOnline;
-  String? about;
-  String? gender;
-  String? userType;
-  String? maritalStatus;
-  String? employmentStatus;
-  String? educationLevel;
-  String? counsellorType;
-  String? religion;
-  String? dob;
-  String? licenseCert;
-  double? rating;
-  int? createdAt;
+  String id;
+  String email;
+  String password;
+  String name;
+  String profile;
+  String phone;
+  String address;
+  String city;
+  String region;
+  bool isOnline;
+  String about;
+  String gender;
+  String userType;
+  String maritalStatus;
+  String employmentStatus;
+  String educationLevel;
+  String counsellorType;
+  String religion;
+  String dob;
+  String licenseCert;
+  double rating;
+  int createdAt;
   UserModel({
-    this.id,
-    this.email,
-    this.password,
-    this.name,
-    this.profile,
-    this.phone,
-    this.address,
-    this.city,
-    this.region,
-    this.isOnline,
-    this.about,
-    this.gender,
-    this.userType,
-    this.maritalStatus,
-    this.employmentStatus,
-    this.educationLevel,
-    this.counsellorType,
-    this.religion,
-    this.dob,
-    this.licenseCert,
-    this.rating = 5,
-    this.createdAt,
+    required this.id,
+    required this.email,
+    required this.password,
+    required this.name,
+    required this.profile,
+    required this.phone,
+    required this.address,
+    required this.city,
+    required this.region,
+    required this.isOnline,
+    required this.about,
+    required this.gender,
+    required this.userType,
+    required this.maritalStatus,
+    required this.employmentStatus,
+    required this.educationLevel,
+    required this.counsellorType,
+    required this.religion,
+    required this.dob,
+    required this.licenseCert,
+    required this.rating,
+    required this.createdAt,
   });
+
+  static UserModel defualt() {
+    return UserModel(
+      id: '',
+      email: '',
+      password: '',
+      name: '',
+      profile: '',
+      phone: '',
+      address: '',
+      city: '',
+      region: '',
+      isOnline: false,
+      about: '',
+      gender: '',
+      userType: '',
+      maritalStatus: '',
+      employmentStatus: '',
+      educationLevel: '',
+      counsellorType: '',
+      religion: '',
+      dob: '',
+      licenseCert: '',
+      rating: 0.0,
+      createdAt: 0,
+    );
+  }
 
   UserModel copyWith({
     String? id,
@@ -103,71 +132,65 @@ class UserModel {
   }
 
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'id': id,
-      'email': email,
-      'password': password,
-      'name': name,
-      'profile': profile,
-      'phone': phone,
-      'address': address,
-      'city': city,
-      'region': region,
-      'isOnline': isOnline,
-      'about': about,
-      'gender': gender,
-      'userType': userType,
-      'maritalStatus': maritalStatus,
-      'employmentStatus': employmentStatus,
-      'educationLevel': educationLevel,
-      'counsellorType': counsellorType,
-      'religion': religion,
-      'dob': dob,
-      'licenseCert': licenseCert,
-      'rating': rating,
-      'createdAt': createdAt,
-    };
+    final result = <String, dynamic>{};
+
+    result.addAll({'id': id});
+    result.addAll({'email': email});
+    result.addAll({'password': password});
+    result.addAll({'name': name});
+    result.addAll({'profile': profile});
+    result.addAll({'phone': phone});
+    result.addAll({'address': address});
+    result.addAll({'city': city});
+    result.addAll({'region': region});
+    result.addAll({'isOnline': isOnline});
+    result.addAll({'about': about});
+    result.addAll({'gender': gender});
+    result.addAll({'userType': userType});
+    result.addAll({'maritalStatus': maritalStatus});
+    result.addAll({'employmentStatus': employmentStatus});
+    result.addAll({'educationLevel': educationLevel});
+    result.addAll({'counsellorType': counsellorType});
+    result.addAll({'religion': religion});
+    result.addAll({'dob': dob});
+    result.addAll({'licenseCert': licenseCert});
+    result.addAll({'rating': rating});
+    result.addAll({'createdAt': createdAt});
+
+    return result;
   }
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
-      id: map['id'] != null ? map['id'] as String : null,
-      email: map['email'] != null ? map['email'] as String : null,
-      password: map['password'] != null ? map['password'] as String : null,
-      name: map['name'] != null ? map['name'] as String : null,
-      profile: map['profile'] != null ? map['profile'] as String : null,
-      phone: map['phone'] != null ? map['phone'] as String : null,
-      address: map['address'] != null ? map['address'] as String : null,
-      city: map['city'] != null ? map['city'] as String : null,
-      region: map['region'] != null ? map['region'] as String : null,
-      isOnline: map['isOnline'] != null ? map['isOnline'] as bool : null,
-      about: map['about'] != null ? map['about'] as String : null,
-      gender: map['gender'] != null ? map['gender'] as String : null,
-      userType: map['userType'] != null ? map['userType'] as String : null,
-      maritalStatus:
-          map['maritalStatus'] != null ? map['maritalStatus'] as String : null,
-      employmentStatus: map['employmentStatus'] != null
-          ? map['employmentStatus'] as String
-          : null,
-      educationLevel: map['educationLevel'] != null
-          ? map['educationLevel'] as String
-          : null,
-      counsellorType: map['counsellorType'] != null
-          ? map['counsellorType'] as String
-          : null,
-      religion: map['religion'] != null ? map['religion'] as String : null,
-      dob: map['dob'] != null ? map['dob'] as String : null,
-      licenseCert:
-          map['licenseCert'] != null ? map['licenseCert'] as String : null,
-      rating: map['rating'] != null ? map['rating'] as double : null,
-      createdAt: map['createdAt'] != null ? map['createdAt'] as int : null,
+      id: map['id'] ?? '',
+      email: map['email'] ?? '',
+      password: map['password'] ?? '',
+      name: map['name'] ?? '',
+      profile: map['profile'] ?? '',
+      phone: map['phone'] ?? '',
+      address: map['address'] ?? '',
+      city: map['city'] ?? '',
+      region: map['region'] ?? '',
+      isOnline: map['isOnline'] ?? false,
+      about: map['about'] ?? '',
+      gender: map['gender'] ?? '',
+      userType: map['userType'] ?? '',
+      maritalStatus: map['maritalStatus'] ?? '',
+      employmentStatus: map['employmentStatus'] ?? '',
+      educationLevel: map['educationLevel'] ?? '',
+      counsellorType: map['counsellorType'] ?? '',
+      religion: map['religion'] ?? '',
+      dob: map['dob'] ?? '',
+      licenseCert: map['licenseCert'] ?? '',
+      rating: map['rating']?.toDouble() ?? 0.0,
+      createdAt: map['createdAt']?.toInt() ?? 0,
     );
   }
 
   String toJson() => json.encode(toMap());
 
   factory UserModel.fromJson(String source) =>
-      UserModel.fromMap(json.decode(source) as Map<String, dynamic>);
+      UserModel.fromMap(json.decode(source));
 
   @override
   String toString() {
@@ -175,10 +198,11 @@ class UserModel {
   }
 
   @override
-  bool operator ==(covariant UserModel other) {
+  bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other.id == id &&
+    return other is UserModel &&
+        other.id == id &&
         other.email == email &&
         other.password == password &&
         other.name == name &&
@@ -445,6 +469,9 @@ class DummyCounsellors {
     return _random.nextBool();
   }
 
+  static double _getRandomRating() {
+    return _random.nextDouble() * 5;
+  }
   static String _getRandomGender(bool isMan) {
     return isMan ? 'Male' : 'Female';
   }
@@ -457,6 +484,11 @@ class DummyCounsellors {
   static String _getCounsellorType() {
     return counsellorTypeList[_random.nextInt(counsellorTypeList.length)];
   }
+  static String _getRandomAbout() {
+    var faker = Faker();
+    return faker.lorem.sentence();
+    
+  }
 
   static List<UserModel> counsellorList() {
     List<UserModel> counsellors = [];
@@ -465,23 +497,26 @@ class DummyCounsellors {
       bool isMan = counselorNames[i].startsWith('Dr') ||
           counselorNames[i].startsWith('Mr');
       var city = counselorAddresses[i].split(',');
-      counsellors.add(
-        UserModel(
-          name: counselorNames[i],
-          email: counselorEmails[i],
-          address: counselorAddresses[i],
-          region: counselorRegions[i],
-          password: '',
-          gender: _getRandomGender(isMan),
-          phone: counselorPhoneNumbers[i],
-          religion: _getRandomReligion(),
-          counsellorType: _getCounsellorType(),
-          profile: counselorImages[i],
-          userType: 'Counsellor',
-          isOnline: _getRandomBool(),
-          city: city[0],
-        ),
+      var user = UserModel.defualt();
+     user = user.copyWith(
+        name: counselorNames[i],
+        email: counselorEmails[i],
+        address: counselorAddresses[i],
+        region: counselorRegions[i],
+        password: '',
+        gender: _getRandomGender(isMan),
+        phone: counselorPhoneNumbers[i],
+        religion: _getRandomReligion(),
+        counsellorType: _getCounsellorType(),
+        profile: counselorImages[i],
+        userType: 'Counsellor',
+        isOnline: _getRandomBool(),
+        city: city[0],
+        rating: double.parse(_getRandomRating().toStringAsFixed(1)),
+        about: _getRandomAbout()
       );
+
+      counsellors.add(user);
     }
     return counsellors;
   }

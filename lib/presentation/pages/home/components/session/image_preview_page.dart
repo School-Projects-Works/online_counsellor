@@ -104,17 +104,17 @@ class _ImagePreviewPageState extends ConsumerState<ImagePreviewPage> {
     );
 
     String mediaUrls = await CloudStorageServices.sendFile(
-        widget.imageUrls, widget.session!.id!);
+        widget.imageUrls, widget.session!.id);
     var session = widget.session!;
 
     //send message to firebase firestore
     var uid = ref.watch(userProvider).id;
     var receiverId =
-        uid == session.userId ? session.counsellorId! : session.userId;
+        uid == session.userId ? session.counsellorId : session.userId;
     var receiverName =
-        uid == session.userId ? session.counsellorName! : session.userName;
+        uid == session.userId ? session.counsellorName : session.userName;
     var receiverImage =
-        uid == session.userId ? session.counsellorImage! : session.userImage!;
+        uid == session.userId ? session.counsellorImage : session.userImage;
     SessionMessagesModel messagesModel = SessionMessagesModel();
     messagesModel.message = _captionController.text;
     messagesModel.type = 'image';

@@ -35,16 +35,16 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
     //check if widget is build
     WidgetsBinding.instance.addPostFrameCallback((_) {
       var user = ref.read(userProvider);
-      _nameController.text = user.name ?? '';
-      _dobController.text = user.dob ?? '';
-      _aboutController.text = user.about ?? '';
-      _phoneController.text = user.phone ?? '';
-      _addressController.text = user.address ?? '';
-      _cityController.text = user.city ?? '';
-      region = user.region ?? '';
+      _nameController.text = user.name;
+      _dobController.text = user.dob;
+      _aboutController.text = user.about;
+      _phoneController.text = user.phone;
+      _addressController.text = user.address;
+      _cityController.text = user.city;
+      region = user.region;
       setState(() {
-        region = user.region ?? '';
-        userProfile = user.profile ?? '';
+        region = user.region;
+        userProfile = user.profile;
       });
     });
     super.initState();

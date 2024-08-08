@@ -50,20 +50,20 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAUky0y7eYoUC4xE3pjLTRoP8bTefsLkDM',
-    appId: '1:414938965130:android:ade25087019fb9f1e33973',
-    messagingSenderId: '414938965130',
-    projectId: 'online-counselling-admin',
-    storageBucket: 'online-counselling-admin.appspot.com',
+    apiKey: 'AIzaSyB6XgyAh5YSizXfRqG35qqoqLJ_5ZWBb20',
+    appId: '1:465273333545:android:108b88f69da5317c9db938',
+    messagingSenderId: '465273333545',
+    projectId: 'online-counsellor',
+    storageBucket: 'online-counsellor.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAmy6Y3qGiEJsgIP-PdZQxEp-UqWhOiZRg',
-    appId: '1:414938965130:ios:c7648bfe352bb4f0e33973',
-    messagingSenderId: '414938965130',
-    projectId: 'online-counselling-admin',
-    storageBucket: 'online-counselling-admin.appspot.com',
-    iosClientId: '414938965130-oqb1uqmd09k1tit9q0kggkmidcm6oo8q.apps.googleusercontent.com',
+    apiKey: 'AIzaSyAFRY_LkOgy4IbTbEsGXBuLzvNH543t7Cg',
+    appId: '1:465273333545:ios:63698c739e1ab1529db938',
+    messagingSenderId: '465273333545',
+    projectId: 'online-counsellor',
+    storageBucket: 'online-counsellor.appspot.com',
     iosBundleId: 'com.fussionTeck.onlineCounsellor',
   );
+
 }

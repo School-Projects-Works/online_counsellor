@@ -11,6 +11,10 @@ import '../models/user_model.dart';
 
 class FireStoreServices {
   static final _fireStore = FirebaseFirestore.instance;
+
+  static String getUserId (){
+    return _fireStore.collection('users').doc().id;
+  }
   static Future<UserModel?> getUser(String uid) async {
     final user = await _fireStore.collection('users').doc(uid).get();
     return UserModel.fromMap(user.data()!);
@@ -83,7 +87,8 @@ class FireStoreServices {
           .where('userId', isEqualTo: userId)
           .where('status', isNotEqualTo: 'Ended')
           .snapshots();
-    } on FirebaseException {
+    } on FirebaseException catch(error) {
+      
       return const Stream.empty();
     }
   }
@@ -181,7 +186,8 @@ class FireStoreServices {
           .where('userId', isEqualTo: userId)
           .where('status', isNotEqualTo: 'Ended')
           .snapshots();
-    } on FirebaseException {
+    } on FirebaseException catch (error) {
+      throw error;
       return const Stream.empty();
     }
   }

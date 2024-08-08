@@ -1,4 +1,4 @@
-// ignore_for_file: empty_catches
+// ignore_for_file: empty_catches, use_build_context_synchronously
 
 import 'dart:async';
 import 'dart:io';
@@ -30,7 +30,7 @@ final userProvider =
     StateNotifierProvider<UserProvider, UserModel>((ref) => UserProvider());
 
 class UserProvider extends StateNotifier<UserModel> {
-  UserProvider() : super(UserModel());
+  UserProvider() : super(UserModel.defualt());
 
   void setUser(UserModel user) {
     state = user;
@@ -106,7 +106,7 @@ class UserProvider extends StateNotifier<UserModel> {
     state = state.copyWith(createdAt: DateTime.now().millisecondsSinceEpoch);
     //create user in firebase auth
     final user = await FirebaseAuthService.createUserWithEmailAndPassword(
-        state.email!, state.password!);
+        state.email, state.password);
     if (user != null) {
       //send verification email
       await FirebaseAuthService.sendEmailVerification();
@@ -129,7 +129,7 @@ class UserProvider extends StateNotifier<UserModel> {
       if (response == 'success') {
         //? UPDATE user profile
         // clear all states
-        ref.read(userProvider.notifier).state = UserModel();
+        ref.read(userProvider.notifier).state = UserModel.defualt();
         ref.read(userImageProvider.notifier).state = null;
         ref.read(certificateProvider.notifier).state = null;
         ref.read(signUpIndexProvider.notifier).state = 0;
@@ -163,7 +163,7 @@ class UserProvider extends StateNotifier<UserModel> {
     CustomDialog.showLoading(message: 'Updating User... Please wait');
     if (imageFile != null) {
       final imageUrl =
-          await CloudStorageServices.saveUserImage(imageFile, state.id!);
+          await CloudStorageServices.saveUserImage(imageFile, state.id);
       state = state.copyWith(profile: imageUrl);
     }
     state = state.copyWith(
@@ -245,7 +245,7 @@ class UserSignInProvider extends StateNotifier<User?> {
           );
         }
       } else {
-        await FirebaseAuthService.signOut();
+        //await FirebaseAuthService.signOut();
         CustomDialog.dismiss();
         CustomDialog.showInfo(
             title: 'Email not verified',
@@ -312,10 +312,10 @@ final filteredCounsellorsProvider =
   if (search.isEmpty) return list;
   return list
       .where((element) =>
-          element.counsellorType!
+          element.counsellorType
               .toLowerCase()
               .contains(search.toLowerCase()) ||
-          element.name!.toLowerCase().contains(search.toLowerCase()))
+          element.name.toLowerCase().contains(search.toLowerCase()))
       .toList();
 });
 
@@ -327,10 +327,10 @@ final searchControllerProvider =
   if (search.isEmpty) return [];
   return list
       .where((element) =>
-          element.counsellorType!
+          element.counsellorType
               .toLowerCase()
               .contains(search.toLowerCase()) ||
-          element.name!.toLowerCase().contains(search.toLowerCase()))
+          element.name.toLowerCase().contains(search.toLowerCase()))
       .toList();
 });
 
@@ -341,7 +341,7 @@ final currentAppointmentProvider =
         (ref) => CurrentAppointmentProvider());
 
 class CurrentAppointmentProvider extends StateNotifier<AppointmentModel> {
-  CurrentAppointmentProvider() : super(AppointmentModel());
+  CurrentAppointmentProvider() : super(AppointmentModel.defualt());
   void setCurrentAppointment(AppointmentModel appointment) {
     state = appointment;
   }
@@ -396,12 +396,13 @@ final appointmentStreamProvider =
     StreamProvider.autoDispose<List<AppointmentModel>>((ref) async* {
   var userId = ref.watch(userProvider).id;
   var counsellorId = ref.watch(selectedCounsellorProvider)!.id;
-  var appointments =
-      FireStoreServices.getAppointmentStream(userId!, counsellorId!);
-  ref.onDispose(() {
-    appointments.drain();
-  });
+  
   try {
+    var appointments =
+        FireStoreServices.getAppointmentStream(userId, counsellorId);
+    ref.onDispose(() {
+      appointments.drain();
+    });
     var data = <AppointmentModel>[];
     await for (var element in appointments) {
       data =
@@ -411,7 +412,9 @@ final appointmentStreamProvider =
               element.status == 'Pending' || element.status == 'Accepted')
           .toList();
     }
-  } catch (e) {}
+  } catch (e) {
+    throw Exception(e);
+  }
 });
 
 final messageTokenProvider = StateProvider<String?>((ref) => null);
@@ -422,7 +425,7 @@ final selectedCounsellorStreamProvider =
   ref.onDispose(() {
     counsellor.drain();
   });
-  var data = UserModel();
+  var data = UserModel.defualt();
   await for (var element in counsellor) {
     data = UserModel.fromMap(element.data()!);
     yield data;
@@ -583,17 +586,17 @@ class AudioRecordingProvider extends StateNotifier<File?> {
     //show loading
     CustomDialog.showLoading(message: 'Sending Audio... Please wait');
     //save file to cloud storage
-    final String url = await CloudStorageServices.sendFile(state!, session.id!);
+    final String url = await CloudStorageServices.sendFile(state!, session.id);
     //save file to firestore
 
     //send message to firebase firestore
     var uid = ref.watch(userProvider).id;
     var receiverId =
-        uid == session.userId ? session.counsellorId! : session.userId;
+        uid == session.userId ? session.counsellorId : session.userId;
     var receiverName =
-        uid == session.userId ? session.counsellorName! : session.userName;
+        uid == session.userId ? session.counsellorName : session.userName;
     var receiverImage =
-        uid == session.userId ? session.counsellorImage! : session.userImage!;
+        uid == session.userId ? session.counsellorImage : session.userImage;
     SessionMessagesModel messagesModel = SessionMessagesModel();
     messagesModel.type = 'audio';
     messagesModel.senderId = uid;

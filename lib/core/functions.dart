@@ -47,7 +47,7 @@ double getRandomRating() {
 }
 
 List<UserModel> sortUsersByRating(List<UserModel> users) {
-  users.sort((a, b) => b.rating!.compareTo(a.rating!));
+  users.sort((a, b) => b.rating.compareTo(a.rating));
   // return in descending order
   return users;
 }

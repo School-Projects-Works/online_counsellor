@@ -76,7 +76,7 @@ class _AppointmentPageState extends ConsumerState<AppointmentPage> {
                                   padding: const EdgeInsets.only(bottom: 150),
                                   itemCount: list.length,
                                   itemBuilder: (context, index) {
-                                    return AppointmentCard(list[index].id!);
+                                    return AppointmentCard(list[index].id);
                                   },
                                 );
                               } else {
@@ -90,7 +90,7 @@ class _AppointmentPageState extends ConsumerState<AppointmentPage> {
                                   itemCount: data.length,
                                   itemBuilder: (context, index) {
                                     var appointment = data[index];
-                                    return AppointmentCard(appointment.id!);
+                                    return AppointmentCard(appointment.id);
                                   })
                               : Center(
                                   child: Text('No Appointment Found',

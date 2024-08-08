@@ -30,9 +30,16 @@ class MyApp extends ConsumerStatefulWidget {
 
 class _MyAppState extends ConsumerState<MyApp> {
   Future<bool> _initUser() async {
+    var users = DummyCounsellors.counsellorList();
+    // for (var user in users) {
+    //   user.id = FireStoreServices.getUserId();
+    //   user.createdAt = DateTime.now().millisecondsSinceEpoch;
+
+    //   await FireStoreServices.saveUser(user);
+    // }
     ref.watch(quotesProvider.notifier).getQuotes();
     ref.watch(counsellorsProvider.notifier).getCounsellors();
-
+    //await FirebaseAuthService.signOut();
     if (FirebaseAuthService.isUserLogin()) {
       User user = FirebaseAuthService.getCurrentUser();
       await FireStoreServices.updateUserOnlineStatus(user.uid, true);

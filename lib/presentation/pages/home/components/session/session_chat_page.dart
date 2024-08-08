@@ -46,8 +46,8 @@ class _SessionChatPageState extends ConsumerState<SessionChatPage> {
     var uid = ref.watch(userProvider).id;
     var session = ref.watch(selectedSessionProvider);
     var selectedUser = ref.watch(selectedCounsellorStreamProvider(
-        uid == session.userId ? session.counsellorId! : session.userId!));
-    var sessionMessages = ref.watch(sessionMessagesStreamProvider(session.id!));
+        uid == session.userId ? session.counsellorId : session.userId));
+    var sessionMessages = ref.watch(sessionMessagesStreamProvider(session.id));
 
     return Scaffold(
       appBar: AppBar(
@@ -81,11 +81,11 @@ class _SessionChatPageState extends ConsumerState<SessionChatPage> {
               children: [
                 CircleAvatar(
                     backgroundImage: uid == session.userId
-                        ? session.counsellorImage != null
-                            ? NetworkImage(session.counsellorImage!)
+                        ? session.counsellorImage.isNotEmpty
+                            ? NetworkImage(session.counsellorImage)
                             : null
-                        : session.userImage != null
-                            ? NetworkImage(session.userImage!)
+                        : session.userImage.isNotEmpty
+                            ? NetworkImage(session.userImage)
                             : null),
                 const SizedBox(width: 10),
                 Column(
@@ -94,8 +94,8 @@ class _SessionChatPageState extends ConsumerState<SessionChatPage> {
                   children: [
                     Text(
                       uid == session.userId
-                          ? session.counsellorName!
-                          : session.userName!,
+                          ? session.counsellorName
+                          : session.userName,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style:
@@ -103,7 +103,7 @@ class _SessionChatPageState extends ConsumerState<SessionChatPage> {
                     ),
                     selectedUser.when(data: (data) {
                       if (data != null) {
-                        String status = data.isOnline! ? 'Online' : 'Offline';
+                        String status = data.isOnline ? 'Online' : 'Offline';
                         return Text(
                           status,
                           style: normalText(
@@ -139,7 +139,7 @@ class _SessionChatPageState extends ConsumerState<SessionChatPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  session.topic!,
+                  session.topic,
                   style: normalText(fontSize: 18, fontWeight: FontWeight.w600),
                 ),
               ],
@@ -162,7 +162,7 @@ class _SessionChatPageState extends ConsumerState<SessionChatPage> {
                       .toList();
                 });
                 //update isRead to true
-                updateMessage(unreadMessages, session.id!);
+                updateMessage(unreadMessages, session.id);
                 return ListView.builder(
                   itemCount: data.length,
                   shrinkWrap: true,
@@ -272,11 +272,11 @@ class _SessionChatPageState extends ConsumerState<SessionChatPage> {
     });
     var uid = ref.watch(userProvider).id;
     var receiverId =
-        uid == session.userId ? session.counsellorId! : session.userId;
+        uid == session.userId ? session.counsellorId : session.userId;
     var receiverName =
-        uid == session.userId ? session.counsellorName! : session.userName;
+        uid == session.userId ? session.counsellorName : session.userName;
     var receiverImage =
-        uid == session.userId ? session.counsellorImage! : session.userImage!;
+        uid == session.userId ? session.counsellorImage : session.userImage;
     SessionMessagesModel messagesModel = SessionMessagesModel();
     messagesModel.message = message;
     messagesModel.type = type;
@@ -375,7 +375,7 @@ class _SessionChatPageState extends ConsumerState<SessionChatPage> {
     CustomDialog.dismiss();
     CustomDialog.showLoading(message: 'Ending Session...');
     var result =
-        await FireStoreServices.updateSessionStatus(session.id!, 'Ended');
+        await FireStoreServices.updateSessionStatus(session.id, 'Ended');
     if (result) {
       CustomDialog.dismiss();
       CustomDialog.showSuccess(title: 'Success', message: 'Session Ended');

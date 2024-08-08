@@ -149,9 +149,9 @@ class _AppointmentCardState extends ConsumerState<AppointmentCard> {
                         width: 100,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
-                          image: data.counsellorImage != null
+                          image: data.counsellorImage.isNotEmpty
                               ? DecorationImage(
-                                  image: NetworkImage(data.counsellorImage!),
+                                  image: NetworkImage(data.counsellorImage),
                                   fit: BoxFit.fill,
                                 )
                               : null,
@@ -163,9 +163,9 @@ class _AppointmentCardState extends ConsumerState<AppointmentCard> {
                         width: 100,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
-                          image: data.userImage != null
+                          image: data.userImage.isNotEmpty 
                               ? DecorationImage(
-                                  image: NetworkImage(data.userImage!),
+                                  image: NetworkImage(data.userImage),
                                   fit: BoxFit.fill,
                                 )
                               : null,
@@ -178,12 +178,12 @@ class _AppointmentCardState extends ConsumerState<AppointmentCard> {
                         children: [
                           Text(
                               user.id == data.userId
-                                  ? data.counsellorName ?? ''
-                                  : data.userName ?? '',
+                                  ? data.counsellorName 
+                                  : data.userName,
                               style: normalText(
                                   fontSize: 16, fontWeight: FontWeight.bold)),
                           Text(
-                              "(${user.id == data.userId ? data.counsellorType ?? '' : 'Client'})",
+                              "(${user.id == data.userId ? data.counsellorType : 'Client'})",
                               style: normalText(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
@@ -196,7 +196,7 @@ class _AppointmentCardState extends ConsumerState<AppointmentCard> {
                                   style: normalText(
                                       fontSize: 14,
                                       fontWeight: FontWeight.bold)),
-                              Text(getDateFromDate(data.date!),
+                              Text(getDateFromDate(data.date),
                                   style: normalText(
                                       fontSize: 14,
                                       fontWeight: FontWeight.bold)),
@@ -210,7 +210,7 @@ class _AppointmentCardState extends ConsumerState<AppointmentCard> {
                                   style: normalText(
                                       fontSize: 14,
                                       fontWeight: FontWeight.bold)),
-                              Text(getTimeFromDate(data.time!),
+                              Text(getTimeFromDate(data.time),
                                   style: normalText(
                                       fontSize: 14,
                                       fontWeight: FontWeight.bold)),
@@ -224,7 +224,7 @@ class _AppointmentCardState extends ConsumerState<AppointmentCard> {
                                   style: normalText(
                                       fontSize: 14,
                                       fontWeight: FontWeight.bold)),
-                              Text(data.status ?? '',
+                              Text(data.status ,
                                   style: normalText(
                                       color: data.status == 'Pending'
                                           ? Colors.grey
@@ -253,7 +253,7 @@ class _AppointmentCardState extends ConsumerState<AppointmentCard> {
       CustomDialog.showInfo(
           title: 'Accept Appointment',
           message:
-              'Are you sure you want to accept this appointment?\nDate: ${getDateFromDate(ref.read(selectedAppointmentProvider).date!)}\nTime: ${getTimeFromDate(ref.read(selectedAppointmentProvider).time!)}',
+              'Are you sure you want to accept this appointment?\nDate: ${getDateFromDate(ref.read(selectedAppointmentProvider).date)}\nTime: ${getTimeFromDate(ref.read(selectedAppointmentProvider).time)}',
           onConfirm: () {
             ref
                 .read(selectedAppointmentProvider.notifier)
@@ -271,9 +271,9 @@ class _AppointmentCardState extends ConsumerState<AppointmentCard> {
                 .updateAppointment('Cancelled');
           });
     } else if (value == 'Reschedule') {
-      DateTime date = DateTime.fromMillisecondsSinceEpoch(data.date!);
+      DateTime date = DateTime.fromMillisecondsSinceEpoch(data.date);
       TimeOfDay time = TimeOfDay.fromDateTime(
-          DateTime.fromMillisecondsSinceEpoch(data.time!));
+          DateTime.fromMillisecondsSinceEpoch(data.time));
       showDatePicker(
         context: context,
         initialDate: date,
@@ -296,7 +296,7 @@ class _AppointmentCardState extends ConsumerState<AppointmentCard> {
               CustomDialog.showInfo(
                   title: 'Reschedule Appointment',
                   message:
-                      'Are you sure you want to reschedule this appointment?\nDate: ${getDateFromDate(ref.read(selectedAppointmentProvider).date!)}\nTime: ${getTimeFromDate(ref.read(selectedAppointmentProvider).time!)}',
+                      'Are you sure you want to reschedule this appointment?\nDate: ${getDateFromDate(ref.read(selectedAppointmentProvider).date)}\nTime: ${getTimeFromDate(ref.read(selectedAppointmentProvider).time)}',
                   onConfirm: () {
                     ref
                         .read(selectedAppointmentProvider.notifier)
@@ -311,7 +311,7 @@ class _AppointmentCardState extends ConsumerState<AppointmentCard> {
       CustomDialog.showInfo(
           title: 'End Appointment',
           message:
-              'Are you sure you want to end this appointment?\nDate: ${getDateFromDate(ref.read(selectedAppointmentProvider).date!)}\nTime: ${getTimeFromDate(ref.read(selectedAppointmentProvider).time!)}',
+              'Are you sure you want to end this appointment?\nDate: ${getDateFromDate(ref.read(selectedAppointmentProvider).date)}\nTime: ${getTimeFromDate(ref.read(selectedAppointmentProvider).time)}',
           onConfirm: () {
             ref
                 .read(selectedAppointmentProvider.notifier)

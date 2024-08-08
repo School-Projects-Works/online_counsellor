@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously, deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -63,8 +65,8 @@ class _HomeMainState extends ConsumerState<HomeMainPage> {
                     child: CircleAvatar(
                       radius: 15,
                       backgroundColor: primaryColor.withOpacity(.5),
-                      backgroundImage: ref.watch(userProvider).profile != null
-                          ? NetworkImage(ref.watch(userProvider).profile!)
+                      backgroundImage: ref.watch(userProvider).profile.isNotEmpty
+                          ? NetworkImage(ref.watch(userProvider).profile)
                           : null,
                     ),
                     itemBuilder: (context) {
@@ -87,7 +89,7 @@ class _HomeMainState extends ConsumerState<HomeMainPage> {
                             //set user isOnline to false in firestore
                             var userId = ref.read(userProvider).id;
                             await FireStoreServices.updateUserOnlineStatus(
-                                userId!, false);
+                                userId, false);
                             await FirebaseAuthService.signOut();
                             if (mounted) {
                               noReturnSendToPage(context, const AuthMainPage());
@@ -173,7 +175,7 @@ class _HomeMainState extends ConsumerState<HomeMainPage> {
   void closeApp() async {
     //set user isOnline to false in firestore
     var userId = ref.read(userProvider).id;
-    await FireStoreServices.updateUserOnlineStatus(userId!, false)
+    await FireStoreServices.updateUserOnlineStatus(userId, false)
         .then((value) => Navigator.of(context).pop(true));
   }
 

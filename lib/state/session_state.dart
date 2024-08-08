@@ -30,7 +30,7 @@ final currentSessionProvider =
         (ref) => CurrentSessionProvider());
 
 class CurrentSessionProvider extends StateNotifier<SessionModel> {
-  CurrentSessionProvider() : super(SessionModel());
+  CurrentSessionProvider() : super(SessionModel.defualt());
   void setCurrentSession(SessionModel session) {
     state = session;
   }
@@ -92,7 +92,7 @@ final selectedSessionProvider =
         (ref) => SelectedSessionProvider());
 
 class SelectedSessionProvider extends StateNotifier<SessionModel> {
-  SelectedSessionProvider() : super(SessionModel());
+  SelectedSessionProvider() : super(SessionModel.defualt());
   void setSelectedSession(SessionModel session) {
     state = session;
   }
@@ -160,8 +160,8 @@ final searchSessionProvider =
   } else {
     return sessions
         .where((element) =>
-            element.topic!.toLowerCase().contains(query.toLowerCase()) ||
-            element.counsellorName!.toLowerCase().contains(query.toLowerCase()))
+            element.topic.toLowerCase().contains(query.toLowerCase()) ||
+            element.counsellorName.toLowerCase().contains(query.toLowerCase()))
         .toList();
   }
 });

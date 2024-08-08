@@ -3,12 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:online_counsellor/core/components/widgets/custom_button.dart';
 import 'package:online_counsellor/core/components/widgets/custom_drop_down.dart';
+import 'package:online_counsellor/core/components/widgets/smart_dialog.dart';
 import 'package:online_counsellor/core/functions.dart';
 import 'package:online_counsellor/models/user_model.dart';
 import 'package:online_counsellor/presentation/pages/home/components/session/session_chat_page.dart';
 import 'package:online_counsellor/state/data_state.dart';
 import 'package:online_counsellor/styles/colors.dart';
 import 'package:online_counsellor/styles/styles.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../core/components/constants/strings.dart';
 import '../../state/session_state.dart';
 
@@ -18,7 +20,7 @@ class CounsellorViewPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     UserModel? counsellor = ref.watch(selectedCounsellorProvider);
-    var stream = ref.watch(activeSessionStream(counsellor!.id!));
+    var stream = ref.watch(activeSessionStream(counsellor!.id));
     return SafeArea(
       child: Scaffold(
           body: Container(
@@ -52,9 +54,9 @@ class CounsellorViewPage extends ConsumerWidget {
                     ],
                   ),
                   const SizedBox(height: 10),
-                  if (counsellor.profile != null)
+                  if (counsellor.profile.isNotEmpty)
                     Image.network(
-                      counsellor.profile!,
+                      counsellor.profile,
                       height: 300,
                       width: double.infinity,
                       fit: BoxFit.fill,
@@ -103,7 +105,9 @@ class CounsellorViewPage extends ConsumerWidget {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 10, vertical: 0),
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            _launchURL('mailto:${counsellor.email}');
+                          },
                           child: Text(counsellor.email.toString(),
                               style: normalText(color: Colors.blue))),
                     ],
@@ -120,7 +124,9 @@ class CounsellorViewPage extends ConsumerWidget {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 10, vertical: 0),
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            _launchURL('tel:${counsellor.phone}');
+                          },
                           child: Text(counsellor.phone.toString(),
                               style: normalText(color: Colors.blue))),
                     ],
@@ -146,7 +152,7 @@ class CounsellorViewPage extends ConsumerWidget {
                       subtitle: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          counsellor.about ?? '',
+                          counsellor.about,
                           maxLines: 4,
                           overflow: TextOverflow.ellipsis,
                           style: normalText(fontSize: 14),
@@ -199,13 +205,15 @@ class CounsellorViewPage extends ConsumerWidget {
                                     );
                                   }
                                 },
-                                error: (error, stackTrace) => Center(
-                                  child: Text(
-                                    'Error',
-                                    style: normalText(
-                                        fontSize: 12, color: Colors.grey),
-                                  ),
-                                ),
+                                error: (error, stackTrace) {
+                                  return Center(
+                                    child: Text(
+                                      'error',
+                                      style: normalText(
+                                          fontSize: 12, color: Colors.grey),
+                                    ),
+                                  );
+                                },
                               );
                             }),
                           ),
@@ -241,7 +249,7 @@ class CounsellorViewPage extends ConsumerWidget {
                                         color: primaryColor,
                                       )),
                                   error: (error, stackTrace) {
-                                    //throw error
+                                    
 
                                     return Center(
                                       child: Text(
@@ -349,8 +357,7 @@ class CounsellorViewPage extends ConsumerWidget {
                             Text('Date:',
                                 style: normalText(color: Colors.blue)),
                             const SizedBox(width: 10),
-                            if (ref.watch(currentAppointmentProvider).date !=
-                                null)
+                            if (ref.watch(currentAppointmentProvider).date != 0)
                               Text(
                                   getDateFromDate(ref
                                       .watch(currentAppointmentProvider)
@@ -386,8 +393,7 @@ class CounsellorViewPage extends ConsumerWidget {
                             Text('Time: ',
                                 style: normalText(color: Colors.blue)),
                             const SizedBox(width: 10),
-                            if (ref.watch(currentAppointmentProvider).time !=
-                                null)
+                            if (ref.watch(currentAppointmentProvider).time != 0)
                               Text(
                                   getTimeFromDate(ref
                                       .watch(currentAppointmentProvider)
@@ -417,5 +423,11 @@ class CounsellorViewPage extends ConsumerWidget {
             ),
           );
         });
+  }
+
+  Future<void> _launchURL(String url) async {
+    if (!await launchUrl(Uri.parse(url))) {
+      CustomDialog.showToast(message: 'Could not launch $url');
+    }
   }
 }
