@@ -1,7 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:online_counsellor/core/components/widgets/custom_drop_down.dart';
 import 'package:online_counsellor/state/navigation_state.dart';
 import '../../../core/components/constants/strings.dart';
@@ -40,7 +39,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Image.asset(Assets.logoLogo, width: 200),
+                Image.asset(Assets.logo.logo.path, width: 200),
                 Text('User Login'.toUpperCase(),
                     style:
                         normalText(fontSize: 35, fontWeight: FontWeight.bold)),
@@ -49,7 +48,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 ),
                 CustomTextFields(
                   hintText: 'Email',
-                  prefixIcon: MdiIcons.email,
+                  prefixIcon: Icons.email,
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   validator: (value) {
@@ -64,7 +63,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 ),
                 CustomTextFields(
                   hintText: 'Password',
-                  prefixIcon: MdiIcons.lock,
+                  prefixIcon: Icons.lock,
                   obscureText: _isPasswordVisible,
                   controller: _passwordController,
                   validator: (value) {
@@ -76,8 +75,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   suffixIcon: IconButton(
                     icon: Icon(
                       _isPasswordVisible
-                          ? MdiIcons.eyeOffOutline
-                          : MdiIcons.eyeOutline,
+                          ? Icons.visibility_off
+                          : Icons.visibility,
                       color: Colors.black,
                       size: 18,
                     ),
@@ -94,7 +93,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 CustomDropDown(
                     value: ref.read(userTypeProvider),
                     hintText: 'Select User Type',
-                    icon: MdiIcons.accountAlert,
+                    icon: Icons.badge,
                     validator: (userType) {
                       if (userType == null) {
                         return 'Please select a user type';

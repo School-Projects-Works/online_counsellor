@@ -16,7 +16,7 @@ class EditUserPage extends ConsumerWidget {
       appBar: AppBar(
         title: Row(children: [
           Image.asset(
-            Assets.logoIcon,
+            Assets.logo.icon.path,
             height: 50,
           ),
           const SizedBox(width: 10),

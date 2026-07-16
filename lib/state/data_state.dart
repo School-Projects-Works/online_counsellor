@@ -1,30 +1,30 @@
-// ignore_for_file: empty_catches, use_build_context_synchronously
-
-import 'dart:async';
 import 'dart:io';
-import 'package:just_audio/just_audio.dart';
-import 'package:online_counsellor/models/session_model.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:record/record.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:online_counsellor/core/components/constants/strings.dart';
-import 'package:online_counsellor/core/functions.dart';
-import 'package:online_counsellor/presentation/pages/authentication/sign_up_page.dart';
-import 'package:online_counsellor/services/other_services.dart';
-import '../core/components/widgets/smart_dialog.dart';
-import '../models/appointment_model.dart';
-import '../models/audio_recording_model.dart';
-import '../models/quotes_model.dart';
-import '../models/session_messages_model.dart';
-import '../models/user_model.dart';
-import '../presentation/pages/home/home_main.dart';
-import '../services/firebase_auth.dart';
-import '../services/firebase_fireStore.dart';
-import '../services/firebase_storage.dart';
+import 'dart:async';
 import 'navigation_state.dart';
+import '../models/user_model.dart';
+import 'package:record/record.dart';
+import '../models/quotes_model.dart';
+import 'package:flutter/material.dart';
+import '../services/firebase_auth.dart';
+import '../models/appointment_model.dart';
+import '../services/firebase_storage.dart';
+import 'package:just_audio/just_audio.dart';
+import '../services/firebase_fireStore.dart';
+import 'package:flutter_riverpod/legacy.dart';
+import '../models/audio_recording_model.dart';
+import '../models/session_messages_model.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../presentation/pages/home/home_main.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../core/components/widgets/smart_dialog.dart';
+import 'package:online_counsellor/core/functions.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:online_counsellor/models/session_model.dart';
+import 'package:online_counsellor/services/other_services.dart';
+import 'package:online_counsellor/core/components/constants/strings.dart';
+import 'package:online_counsellor/presentation/pages/authentication/sign_up_page.dart';
+// ignore_for_file: empty_catches, use_build_context_synchronously
 
 final userProvider =
     StateNotifierProvider<UserProvider, UserModel>((ref) => UserProvider());
@@ -312,9 +312,7 @@ final filteredCounsellorsProvider =
   if (search.isEmpty) return list;
   return list
       .where((element) =>
-          element.counsellorType
-              .toLowerCase()
-              .contains(search.toLowerCase()) ||
+          element.counsellorType.toLowerCase().contains(search.toLowerCase()) ||
           element.name.toLowerCase().contains(search.toLowerCase()))
       .toList();
 });
@@ -327,9 +325,7 @@ final searchControllerProvider =
   if (search.isEmpty) return [];
   return list
       .where((element) =>
-          element.counsellorType
-              .toLowerCase()
-              .contains(search.toLowerCase()) ||
+          element.counsellorType.toLowerCase().contains(search.toLowerCase()) ||
           element.name.toLowerCase().contains(search.toLowerCase()))
       .toList();
 });
@@ -396,7 +392,7 @@ final appointmentStreamProvider =
     StreamProvider.autoDispose<List<AppointmentModel>>((ref) async* {
   var userId = ref.watch(userProvider).id;
   var counsellorId = ref.watch(selectedCounsellorProvider)!.id;
-  
+
   try {
     var appointments =
         FireStoreServices.getAppointmentStream(userId, counsellorId);
@@ -453,7 +449,7 @@ class AudioRecordingTimer extends StateNotifier<AudioTimer> {
 
 final audioRecordingProvider =
     StateNotifierProvider.autoDispose<AudioRecordingProvider, File?>((ref) {
-  final record = Record();
+  final record = AudioRecorder();
   final player = AudioPlayer();
   ref.onDispose(() {
     record.dispose();
@@ -464,7 +460,7 @@ final audioRecordingProvider =
 
 class AudioRecordingProvider extends StateNotifier<File?> {
   AudioRecordingProvider(this.record, this.player) : super(null);
-  final Record record;
+  final AudioRecorder record;
   Timer? timer;
   final AudioPlayer player;
 
@@ -482,13 +478,12 @@ class AudioRecordingProvider extends StateNotifier<File?> {
       if (await record.hasPermission()) {
         // Start recording
         await record.start(
-          path: directoryPath,
-
+          const RecordConfig(
             encoder: AudioEncoder.wav, // by default
             bitRate: 128000, // by default
-          samplingRate: 44100, // by default
-
-
+            sampleRate: 44100, // by default
+          ),
+          path: directoryPath,
         );
         timer = Timer.periodic(const Duration(seconds: 1), (timer) {
           var time = timer.tick;

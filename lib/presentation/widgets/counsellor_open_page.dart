@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:online_counsellor/core/components/widgets/custom_button.dart';
 import 'package:online_counsellor/core/components/widgets/custom_drop_down.dart';
 import 'package:online_counsellor/core/components/widgets/smart_dialog.dart';
@@ -48,7 +47,7 @@ class CounsellorViewPage extends ConsumerWidget {
                           color: Colors.red,
                           text: 'Close',
                           onPressed: () => Navigator.pop(context),
-                          icon: MdiIcons.closeBox,
+                          icon: Icons.cancel,
                         ),
                       ),
                     ],
@@ -183,7 +182,7 @@ class CounsellorViewPage extends ConsumerWidget {
                                         setSessionTopic(
                                             context, ref, counsellor);
                                       },
-                                      icon: MdiIcons.chatProcessing,
+                                      icon: Icons.chat_bubble,
                                     );
                                   } else {
                                     return CustomButton(
@@ -201,7 +200,7 @@ class CounsellorViewPage extends ConsumerWidget {
                                         sendToPage(
                                             context, const SessionChatPage());
                                       },
-                                      icon: MdiIcons.chatProcessing,
+                                      icon: Icons.chat_bubble,
                                     );
                                   }
                                 },
@@ -232,7 +231,7 @@ class CounsellorViewPage extends ConsumerWidget {
                                           getDateTimes(
                                               context, ref, counsellor);
                                         },
-                                        icon: MdiIcons.calendarPlus,
+                                        icon: Icons.event_available,
                                       );
                                     } else {
                                       return Text('Pending Appoint.',
@@ -304,7 +303,7 @@ class CounsellorViewPage extends ConsumerWidget {
                         .read(currentSessionProvider.notifier)
                         .bookSession(context, ref);
                   },
-                  icon: MdiIcons.chatProcessing,
+                  icon: Icons.chat_bubble,
                 ),
               ],
             ),
@@ -417,7 +416,7 @@ class CounsellorViewPage extends ConsumerWidget {
                         .read(currentAppointmentProvider.notifier)
                         .bookAppointment(context, ref);
                   },
-                  icon: MdiIcons.calendarPlus,
+                  icon: Icons.event_available,
                 ),
               ],
             ),

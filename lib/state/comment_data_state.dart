@@ -1,6 +1,7 @@
 //stream of comments by question id
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 
 import '../models/comment_model.dart';
 import '../services/firebase_fireStore.dart';

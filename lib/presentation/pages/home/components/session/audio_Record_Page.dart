@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:simple_ripple_animation/simple_ripple_animation.dart';
 
 import '../../../../../state/data_state.dart';
@@ -59,7 +58,7 @@ class _AudioRecordPageState extends ConsumerState<AudioRecordPage> {
               child: CircleAvatar(
                 minRadius: 25,
                 maxRadius: 25,
-                child: Icon(file == null ? Icons.mic : MdiIcons.speaker,
+                child: Icon(file == null ? Icons.mic : Icons.volume_up,
                     size: 30, color: Colors.black),
               ),
             ),
@@ -97,7 +96,7 @@ class _AudioRecordPageState extends ConsumerState<AudioRecordPage> {
                         color: Colors.white,
                         border: Border.all(color: primaryColor, width: 2),
                       ),
-                      child: Icon(MdiIcons.microphone,
+                      child: Icon(Icons.mic,
                           color: primaryColor, size: 30),
                     ),
                   ),

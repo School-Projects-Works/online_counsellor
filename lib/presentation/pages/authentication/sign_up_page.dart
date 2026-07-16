@@ -1,20 +1,20 @@
 import 'dart:io';
-import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:online_counsellor/core/components/widgets/smart_dialog.dart';
-import 'package:online_counsellor/state/navigation_state.dart';
-import '../../../core/components/constants/strings.dart';
-import '../../../core/components/widgets/custom_button.dart';
-import '../../../core/components/widgets/custom_drop_down.dart';
-import '../../../core/components/widgets/custom_input.dart';
-import '../../../generated/assets.dart';
-import '../../../state/data_state.dart';
 import '../../../styles/colors.dart';
 import '../../../styles/styles.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+import '../../../generated/assets.dart';
+import '../../../state/data_state.dart';
+import 'package:flutter_riverpod/legacy.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/components/constants/strings.dart';
+import '../../../core/components/widgets/custom_input.dart';
+import '../../../core/components/widgets/custom_button.dart';
+import 'package:online_counsellor/state/navigation_state.dart';
+import '../../../core/components/widgets/custom_drop_down.dart';
+import 'package:online_counsellor/core/components/widgets/smart_dialog.dart';
 
 final signUpIndexProvider = StateProvider((ref) => 0);
 
@@ -89,7 +89,7 @@ class _PersonalInfoState extends ConsumerState<PersonalInfo> {
                   onPressed: () {
                     ref.read(authIndexProvider.notifier).state = 0;
                   },
-                  icon: Icon(MdiIcons.arrowLeft),
+                  icon: Icon(Icons.arrow_back),
                   label: const Text('Back')),
             ],
           ),
@@ -99,7 +99,7 @@ class _PersonalInfoState extends ConsumerState<PersonalInfo> {
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Image.asset(Assets.logoLogo, width: 200),
+                Image.asset(Assets.logo.logo.path, width: 200),
                 Text('New User Account'.toUpperCase(),
                     style:
                         normalText(fontSize: 35, fontWeight: FontWeight.bold)),
@@ -112,7 +112,7 @@ class _PersonalInfoState extends ConsumerState<PersonalInfo> {
                 ),
                 CustomDropDown(
                     hintText: 'Select user type',
-                    icon: MdiIcons.accountAlert,
+                    icon: Icons.badge,
                     value: ref.watch(userProvider).userType,
                     validator: (value) {
                       if (value == null) {
@@ -134,7 +134,7 @@ class _PersonalInfoState extends ConsumerState<PersonalInfo> {
                 ),
                 CustomTextFields(
                   hintText: 'Email',
-                  prefixIcon: MdiIcons.email,
+                  prefixIcon: Icons.email,
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   onSaved: (email) {
@@ -152,7 +152,7 @@ class _PersonalInfoState extends ConsumerState<PersonalInfo> {
                 ),
                 CustomTextFields(
                   hintText: 'Full Name',
-                  prefixIcon: MdiIcons.account,
+                  prefixIcon: Icons.person,
                   controller: _nameController,
                   onSaved: (name) {
                     ref.read(userProvider.notifier).setUserName(name!);
@@ -169,7 +169,7 @@ class _PersonalInfoState extends ConsumerState<PersonalInfo> {
                 ),
                 CustomDropDown(
                   hintText: 'User Gender',
-                  icon: MdiIcons.genderNonBinary,
+                  icon: Icons.wc,
                   value: ref.watch(userProvider).gender,
                   items: ['Male', 'Female']
                       .map((e) => DropdownMenuItem(value: e, child: Text(e)))
@@ -190,7 +190,7 @@ class _PersonalInfoState extends ConsumerState<PersonalInfo> {
                 if (ref.watch(userTypeProvider) != 'Counsellor')
                   CustomTextFields(
                     hintText: 'Date of Birth',
-                    prefixIcon: MdiIcons.calendar,
+                    prefixIcon: Icons.calendar_today,
                     controller: _dobController,
                     isReadOnly: true,
                     suffixIcon: IconButton(
@@ -229,7 +229,7 @@ class _PersonalInfoState extends ConsumerState<PersonalInfo> {
                 CustomTextFields(
                   hintText: 'About you',
                   controller: _aboutController,
-                  prefixIcon: MdiIcons.account,
+                  prefixIcon: Icons.person,
                   maxLines: 2,
                   keyboardType: TextInputType.text,
                   onSaved: (value) {
@@ -241,7 +241,7 @@ class _PersonalInfoState extends ConsumerState<PersonalInfo> {
                 ),
                 CustomTextFields(
                   hintText: 'Password',
-                  prefixIcon: MdiIcons.lock,
+                  prefixIcon: Icons.lock,
                   obscureText: _isPasswordVisible,
                   controller: _passwordController,
                   onSaved: (password) {
@@ -256,8 +256,8 @@ class _PersonalInfoState extends ConsumerState<PersonalInfo> {
                   suffixIcon: IconButton(
                     icon: Icon(
                       _isPasswordVisible
-                          ? MdiIcons.eyeOffOutline
-                          : MdiIcons.eyeOutline,
+                          ? Icons.visibility_off
+                          : Icons.visibility,
                       color: Colors.black,
                       size: 18,
                     ),
@@ -351,7 +351,7 @@ class _AddressInfoState extends ConsumerState<AddressInfo> {
                     onPressed: () {
                       ref.read(signUpIndexProvider.notifier).state = 0;
                     },
-                    icon: Icon(MdiIcons.arrowLeft),
+                    icon: Icon(Icons.arrow_back),
                     label: const Text('Back')),
               ],
             ),
@@ -363,7 +363,7 @@ class _AddressInfoState extends ConsumerState<AddressInfo> {
                   const SizedBox(
                     height: 20,
                   ),
-                  Image.asset(Assets.logoLogo, width: 200),
+                  Image.asset(Assets.logo.logo.path, width: 200),
                   Text('New User Account'.toUpperCase(),
                       style: normalText(
                           fontSize: 35, fontWeight: FontWeight.bold)),
@@ -376,7 +376,7 @@ class _AddressInfoState extends ConsumerState<AddressInfo> {
                   ),
                   CustomTextFields(
                     hintText: 'Phone Number',
-                    prefixIcon: MdiIcons.phone,
+                    prefixIcon: Icons.phone,
                     controller: _phoneController,
                     keyboardType: TextInputType.phone,
                     onSaved: (phone) {
@@ -394,7 +394,7 @@ class _AddressInfoState extends ConsumerState<AddressInfo> {
                   ),
                   CustomTextFields(
                     hintText: 'Address',
-                    prefixIcon: MdiIcons.home,
+                    prefixIcon: Icons.home,
                     controller: _addressController,
                     onSaved: (address) {
                       ref.read(userProvider.notifier).setUserAddress(address!);
@@ -420,7 +420,7 @@ class _AddressInfoState extends ConsumerState<AddressInfo> {
                         }
                         return null;
                       },
-                      icon: MdiIcons.earth,
+                      icon: Icons.public,
                       items: regionList
                           .map((e) => DropdownMenuItem(
                               value: e,
@@ -434,7 +434,7 @@ class _AddressInfoState extends ConsumerState<AddressInfo> {
                   ),
                   CustomTextFields(
                     hintText: 'City',
-                    prefixIcon: MdiIcons.city,
+                    prefixIcon: Icons.location_city,
                     controller: _cityController,
                     onSaved: (city) {
                       ref.read(userProvider.notifier).setUserCity(city!);
@@ -518,7 +518,7 @@ class _OtherInfoState extends ConsumerState<OtherInfo> {
                       onPressed: () {
                         ref.read(signUpIndexProvider.notifier).state = 0;
                       },
-                      icon: Icon(MdiIcons.arrowLeft),
+                      icon: Icon(Icons.arrow_back),
                       label: const Text('Back')),
                 ],
               ),
@@ -527,7 +527,7 @@ class _OtherInfoState extends ConsumerState<OtherInfo> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                    Image.asset(Assets.logoLogo, width: 200),
+                    Image.asset(Assets.logo.logo.path, width: 200),
                     Text('New User Account'.toUpperCase(),
                         style: normalText(
                             fontSize: 35, fontWeight: FontWeight.bold)),
@@ -599,7 +599,7 @@ class _OtherInfoState extends ConsumerState<OtherInfo> {
                               .read(userProvider.notifier)
                               .setEducationLevel(value!);
                         },
-                        icon: MdiIcons.school,
+                        icon: Icons.school,
                         validator: (level) {
                           if (ref.watch(userTypeProvider) != 'Counsellor' &&
                               level == null) {
@@ -641,7 +641,7 @@ class _OtherInfoState extends ConsumerState<OtherInfo> {
                                 ))
                             .toList(),
                         hintText: 'Marital Status',
-                        icon: MdiIcons.heart,
+                        icon: Icons.favorite,
                         validator: (p0) {
                           if (ref.watch(userTypeProvider) != 'Counsellor' &&
                               p0 == null) {
@@ -669,7 +669,7 @@ class _OtherInfoState extends ConsumerState<OtherInfo> {
                       onChanged: (religion) {
                         ref.read(userProvider.notifier).setReligion(religion!);
                       },
-                      icon: MdiIcons.church,
+                      icon: Icons.church,
                       items: ['Christianity', 'Islam', 'Traditional', 'Others']
                           .map(
                               (e) => DropdownMenuItem(value: e, child: Text(e)))
@@ -689,7 +689,7 @@ class _OtherInfoState extends ConsumerState<OtherInfo> {
                           }
                           return null;
                         },
-                        icon: MdiIcons.briefcase,
+                        icon: Icons.work,
                         onChanged: (status) {
                           ref
                               .read(userProvider.notifier)
@@ -725,7 +725,7 @@ class _OtherInfoState extends ConsumerState<OtherInfo> {
                                 .read(userProvider.notifier)
                                 .setCounsellorType(type!);
                           },
-                          icon: MdiIcons.abTesting,
+                          icon: Icons.psychology,
                           items: counsellorTypeList
                               .map((e) => DropdownMenuItem(
                                   value: e,
@@ -816,7 +816,7 @@ class _OtherInfoState extends ConsumerState<OtherInfo> {
         child: Column(
           children: [
             ListTile(
-              leading: Icon(MdiIcons.camera),
+              leading: Icon(Icons.camera_alt),
               title: const Text('Camera'),
               onTap: () async {
                 Navigator.pop(context);
@@ -831,7 +831,7 @@ class _OtherInfoState extends ConsumerState<OtherInfo> {
               },
             ),
             ListTile(
-              leading: Icon(MdiIcons.image),
+              leading: Icon(Icons.image),
               title: const Text('Gallery'),
               onTap: () async {
                 Navigator.pop(context);
@@ -863,7 +863,7 @@ class _OtherInfoState extends ConsumerState<OtherInfo> {
               style: normalText(fontWeight: FontWeight.bold),
             ),
             ListTile(
-              leading: Icon(MdiIcons.camera),
+              leading: Icon(Icons.camera_alt),
               title: const Text('Camera'),
               onTap: () async {
                 Navigator.pop(context);
@@ -878,7 +878,7 @@ class _OtherInfoState extends ConsumerState<OtherInfo> {
               },
             ),
             ListTile(
-              leading: Icon(MdiIcons.image),
+              leading: Icon(Icons.image),
               title: const Text('Gallery'),
               onTap: () async {
                 Navigator.pop(context);

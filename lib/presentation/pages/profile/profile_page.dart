@@ -22,7 +22,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
         elevation: 0,
         title: Row(children: [
           Image.asset(
-            Assets.logoIcon,
+            Assets.logo.icon.path,
             height: 45,
           ),
           const SizedBox(width: 10),

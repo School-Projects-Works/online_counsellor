@@ -1,7 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:online_counsellor/core/components/constants/strings.dart';
 import 'package:online_counsellor/core/components/widgets/custom_input.dart';
 import 'package:online_counsellor/core/functions.dart';
@@ -65,8 +64,8 @@ class _HomePageState extends ConsumerState<HomePage> {
                         _focus.unfocus();
                       });
                     },
-                    icon: Icon(MdiIcons.close, color: primaryColor))
-                : Icon(MdiIcons.magnify, color: primaryColor),
+                    icon: Icon(Icons.close, color: primaryColor))
+                : Icon(Icons.search, color: primaryColor),
             onChanged: (p0) =>
                 ref.read(searchQueryProvider.notifier).state = p0,
           ),

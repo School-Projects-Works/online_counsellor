@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:online_counsellor/core/components/widgets/custom_button.dart';
 import 'package:online_counsellor/core/components/widgets/custom_input.dart';
 import 'package:online_counsellor/core/components/widgets/smart_dialog.dart';
@@ -24,7 +23,7 @@ class ForgotPasswordPage extends ConsumerWidget {
                     onPressed: () {
                       ref.read(authIndexProvider.notifier).state = 0;
                     },
-                    icon: Icon(MdiIcons.arrowLeft),
+                    icon: Icon(Icons.arrow_back),
                     label: const Text('Back')),
               ],
             ),
@@ -35,7 +34,7 @@ class ForgotPasswordPage extends ConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Image.asset(Assets.logoLogo, width: 200),
+                      Image.asset(Assets.logo.logo.path, width: 200),
                       Text('Password Reset'.toUpperCase(),
                           style: normalText(
                               fontSize: 35, fontWeight: FontWeight.bold)),
@@ -45,7 +44,7 @@ class ForgotPasswordPage extends ConsumerWidget {
                       CustomTextFields(
                         hintText: 'Your Email',
                         controller: _emailController,
-                        prefixIcon: MdiIcons.email,
+                        prefixIcon: Icons.email,
                         keyboardType: TextInputType.emailAddress,
                         validator: (value) {
                           if (value!.isEmpty ||

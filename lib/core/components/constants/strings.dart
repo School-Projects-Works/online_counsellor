@@ -68,18 +68,18 @@ const List<Map<String, dynamic>> reviews = [
   }
 ];
 
-const counsellorTypeWithIcon = [
-  {"name": 'psychologist', "icon": Assets.imagesPsychologist},
-  {"name": 'Marriage Counsellor', "icon": Assets.imagesMarriage},
-  {"name": 'Students\' Counsellor', "icon": Assets.imagesStudent},
-  {"name": 'Career Counsellor', "icon": Assets.imagesCareer},
-  {"name": 'Family Counsellor', "icon": Assets.imagesFamily},
-  {"name": 'Addiction Counsellor', "icon": Assets.imagesAddiction},
-  {"name": 'Mental Health Counsellor', "icon": Assets.imagesMentalHealth},
-  {"name": 'Grief Counsellor', "icon": Assets.imagesGrief},
-  {"name": 'Rehabilitation Counsellor', "icon": Assets.imagesRehabilitation},
-  {"name": 'Guidance Counsellor', "icon": Assets.imagesGuidance},
-  {"name": 'Child Counsellor', "icon": Assets.imagesChild},
+final counsellorTypeWithIcon = [
+  {"name": 'psychologist', "icon": Assets.images.psychologist.path},
+  {"name": 'Marriage Counsellor', "icon": Assets.images.marriage.path},
+  {"name": 'Students\' Counsellor', "icon": Assets.images.student.path},
+  {"name": 'Career Counsellor', "icon": Assets.images.career.path},
+  {"name": 'Family Counsellor', "icon": Assets.images.family.path},
+  {"name": 'Addiction Counsellor', "icon": Assets.images.addiction.path},
+  {"name": 'Mental Health Counsellor', "icon": Assets.images.mentalHealth.path},
+  {"name": 'Grief Counsellor', "icon": Assets.images.grief.path},
+  {"name": 'Rehabilitation Counsellor', "icon": Assets.images.rehabilitation.path},
+  {"name": 'Guidance Counsellor', "icon": Assets.images.guidance.path},
+  {"name": 'Child Counsellor', "icon": Assets.images.child.path},
 ];
 
 const counsellingTopicCategory = [

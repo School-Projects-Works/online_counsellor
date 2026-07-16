@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import '../../../../../core/components/widgets/custom_input.dart';
 import '../../../../../state/appointemt_data_state.dart';
 import '../../../../../styles/colors.dart';
@@ -60,8 +59,8 @@ class _AppointmentPageState extends ConsumerState<AppointmentPage> {
                                   _focus.unfocus();
                                 });
                               },
-                              icon: Icon(MdiIcons.close, color: primaryColor))
-                          : Icon(MdiIcons.magnify, color: primaryColor),
+                              icon: Icon(Icons.close, color: primaryColor))
+                          : Icon(Icons.search, color: primaryColor),
                       onChanged: (value) {
                         ref.read(appointmentSearchQuery.notifier).state = value;
                       },

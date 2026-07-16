@@ -1,24 +1,23 @@
-import 'dart:async';
 import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:online_counsellor/core/components/widgets/custom_input.dart';
-import 'package:online_counsellor/core/components/widgets/smart_dialog.dart';
-import 'package:online_counsellor/core/functions.dart';
-import 'package:online_counsellor/models/session_messages_model.dart';
-import 'package:online_counsellor/models/session_model.dart';
-import 'package:online_counsellor/presentation/pages/home/components/session/message_item.dart';
-import 'package:online_counsellor/services/firebase_fireStore.dart';
-import 'package:online_counsellor/styles/styles.dart';
-import '../../../../../state/data_state.dart';
-import '../../../../../state/session_state.dart';
-import '../../../../../styles/colors.dart';
+import 'dart:async';
 import 'audio_Record_Page.dart';
 import 'image_preview_page.dart';
 import 'package:record/record.dart';
+import 'package:flutter/material.dart';
+import '../../../../../styles/colors.dart';
+import '../../../../../state/data_state.dart';
+import 'package:image_picker/image_picker.dart';
+import '../../../../../state/session_state.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:online_counsellor/styles/styles.dart';
+import 'package:online_counsellor/core/functions.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:online_counsellor/models/session_model.dart';
+import 'package:online_counsellor/services/firebase_fireStore.dart';
+import 'package:online_counsellor/models/session_messages_model.dart';
+import 'package:online_counsellor/core/components/widgets/custom_input.dart';
+import 'package:online_counsellor/core/components/widgets/smart_dialog.dart';
+import 'package:online_counsellor/presentation/pages/home/components/session/message_item.dart';
 
 class SessionChatPage extends ConsumerStatefulWidget {
   const SessionChatPage({super.key});
@@ -31,7 +30,7 @@ class _SessionChatPageState extends ConsumerState<SessionChatPage> {
   String message = '';
   final TextEditingController _controller = TextEditingController();
   final ImagePicker picker = ImagePicker();
-  final recrd = Record();
+  final recrd = AudioRecorder();
   //create timer
   Timer? timer;
   @override
@@ -240,7 +239,7 @@ class _SessionChatPageState extends ConsumerState<SessionChatPage> {
                                   sendToTransparentPage(
                                       context, const AudioRecordPage());
                                 },
-                                icon: Icon(MdiIcons.microphoneMessage,
+                                icon: Icon(Icons.mic,
                                     color: primaryColor, size: 25)),
                           if (message.isNotEmpty && sending == false)
                             IconButton(

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:online_counsellor/core/components/widgets/custom_button.dart';
 
 import '../../../core/components/constants/strings.dart';
@@ -106,7 +105,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
             ),
             CustomTextFields(
               hintText: 'Full Name',
-              prefixIcon: MdiIcons.account,
+              prefixIcon: Icons.person,
               controller: _nameController,
               onSaved: (name) {
                 ref.read(userProvider.notifier).setUserName(name!);
@@ -125,7 +124,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
             if (ref.watch(userTypeProvider) != 'Counsellor')
               CustomTextFields(
                 hintText: 'Date of Birth',
-                prefixIcon: MdiIcons.calendar,
+                prefixIcon: Icons.calendar_today,
                 controller: _dobController,
                 isReadOnly: true,
                 suffixIcon: IconButton(
@@ -163,7 +162,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
               ),
             CustomTextFields(
               hintText: 'Phone Number',
-              prefixIcon: MdiIcons.phone,
+              prefixIcon: Icons.phone,
               controller: _phoneController,
               keyboardType: TextInputType.phone,
               onSaved: (phone) {
@@ -181,7 +180,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
             ),
             CustomTextFields(
               hintText: 'Address',
-              prefixIcon: MdiIcons.home,
+              prefixIcon: Icons.home,
               controller: _addressController,
               onSaved: (address) {
                 ref.read(userProvider.notifier).setUserAddress(address!);
@@ -207,7 +206,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
                   }
                   return null;
                 },
-                icon: MdiIcons.earth,
+                icon: Icons.public,
                 items: regionList
                     .map((e) => DropdownMenuItem(
                         value: e,
@@ -221,7 +220,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
             ),
             CustomTextFields(
               hintText: 'City',
-              prefixIcon: MdiIcons.city,
+              prefixIcon: Icons.location_city,
               controller: _cityController,
               onSaved: (city) {
                 ref.read(userProvider.notifier).setUserCity(city!);
@@ -239,7 +238,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
             CustomTextFields(
               hintText: 'About you',
               controller: _aboutController,
-              prefixIcon: MdiIcons.account,
+              prefixIcon: Icons.person,
               maxLines: 4,
               keyboardType: TextInputType.text,
               onSaved: (value) {
@@ -287,7 +286,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
         child: Column(
           children: [
             ListTile(
-              leading: Icon(MdiIcons.camera),
+              leading: Icon(Icons.camera_alt),
               title: const Text('Camera'),
               onTap: () async {
                 Navigator.pop(context);
@@ -302,7 +301,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEditPage> {
               },
             ),
             ListTile(
-              leading: Icon(MdiIcons.image),
+              leading: Icon(Icons.image),
               title: const Text('Gallery'),
               onTap: () async {
                 Navigator.pop(context);

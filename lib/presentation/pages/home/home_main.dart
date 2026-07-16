@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:online_counsellor/core/functions.dart';
 import 'package:online_counsellor/presentation/pages/home/components/appointment/appointment_page.dart';
 import 'package:online_counsellor/presentation/pages/home/components/community/community_page.dart';
@@ -48,7 +47,7 @@ class _HomeMainState extends ConsumerState<HomeMainPage> {
               elevation: 0,
               title: Row(children: [
                 Image.asset(
-                  Assets.logoIcon,
+                  Assets.logo.icon.path,
                   height: 45,
                 ),
                 const SizedBox(width: 10),
@@ -116,19 +115,19 @@ class _HomeMainState extends ConsumerState<HomeMainPage> {
                   tabs: [
                     if (userTypes != 'Counsellor')
                       GButton(
-                        icon: MdiIcons.home,
+                        icon: Icons.home,
                         text: 'Home',
                       ),
                     GButton(
-                      icon: MdiIcons.accountGroup,
+                      icon: Icons.group,
                       text: 'Community',
                     ),
                     GButton(
-                      icon: MdiIcons.calendarClock,
+                      icon: Icons.schedule,
                       text: 'Sessions',
                     ),
                     GButton(
-                      icon: MdiIcons.calendar,
+                      icon: Icons.calendar_today,
                       text: 'Appointments',
                     ),
                   ]),

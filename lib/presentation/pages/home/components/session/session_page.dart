@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:online_counsellor/core/components/widgets/custom_input.dart';
 import 'package:online_counsellor/presentation/pages/home/components/session/session_item.dart';
 import 'package:online_counsellor/state/session_state.dart';
@@ -60,8 +59,8 @@ class _SessionPageState extends ConsumerState<SessionPage> {
                                   _focus.unfocus();
                                 });
                               },
-                              icon: Icon(MdiIcons.close, color: primaryColor))
-                          : Icon(MdiIcons.magnify, color: primaryColor),
+                              icon: Icon(Icons.close, color: primaryColor))
+                          : Icon(Icons.search, color: primaryColor),
                       onChanged: (value) {
                         ref.read(sessionSearchQuery.notifier).state = value;
                       },

@@ -1,6 +1,5 @@
-// ignore_for_file: empty_catches
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:online_counsellor/core/components/widgets/smart_dialog.dart';
 import 'package:online_counsellor/core/functions.dart';
 
