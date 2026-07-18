@@ -15,9 +15,11 @@ import 'models/user_model.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  debugPrint('BOOT: before Firebase.initializeApp');
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  debugPrint('BOOT: after Firebase.initializeApp, calling runApp');
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -31,17 +33,26 @@ class MyApp extends ConsumerStatefulWidget {
 class _MyAppState extends ConsumerState<MyApp> {
   late final Future<bool> _initUserFuture;
 
+  static const _initTimeout = Duration(seconds: 10);
+
   Future<bool> _initUser() async {
+    debugPrint('INIT: _initUser start');
     ref.read(quotesProvider.notifier).getQuotes();
     ref.read(counsellorsProvider.notifier).getCounsellors();
     //await FirebaseAuthService.signOut();
     if (!FirebaseAuthService.isUserLogin()) {
+      debugPrint('INIT: no user logged in, going to auth page');
       return false;
     }
     try {
       User user = FirebaseAuthService.getCurrentUser();
-      await FireStoreServices.updateUserOnlineStatus(user.uid, true);
-      UserModel? userModel = await FireStoreServices.getUser(user.uid);
+      debugPrint('INIT: user logged in as ${user.uid}, updating online status');
+      await FireStoreServices.updateUserOnlineStatus(user.uid, true)
+          .timeout(_initTimeout);
+      debugPrint('INIT: online status updated, fetching user doc');
+      UserModel? userModel =
+          await FireStoreServices.getUser(user.uid).timeout(_initTimeout);
+      debugPrint('INIT: getUser returned ${userModel == null ? 'null' : 'a user'}');
       if (userModel != null) {
         ref.read(userProvider.notifier).setUser(userModel);
         return true;
@@ -52,6 +63,7 @@ class _MyAppState extends ConsumerState<MyApp> {
         return false;
       }
     } catch (e) {
+      debugPrint('INIT: _initUser failed with error: $e');
       CustomDialog.showError(
           title: 'Data Error',
           message: 'Unable to get User info, try again later');
