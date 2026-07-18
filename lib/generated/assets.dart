@@ -14,37 +14,38 @@ class $AssetsLogoGen {
 
   final AssetGenImage icon = const AssetGenImage('assets/logo/icon.png');
   final AssetGenImage logo = const AssetGenImage('assets/logo/logo.png');
-  final AssetGenImage logoAndroid12 =
-      const AssetGenImage('assets/logo/logo_android_12.png');
+  final AssetGenImage logoAndroid12 = const AssetGenImage(
+      'assets/logo/logo_android_12.png');
 }
 
 class $AssetsImagesGen {
   const $AssetsImagesGen();
 
-  final AssetGenImage addiction =
-      const AssetGenImage('assets/images/addiction.png');
+  final AssetGenImage addiction = const AssetGenImage(
+      'assets/images/addiction.png');
   final AssetGenImage career = const AssetGenImage('assets/images/career.png');
   final AssetGenImage child = const AssetGenImage('assets/images/child.png');
   final AssetGenImage family = const AssetGenImage('assets/images/family.png');
   final AssetGenImage grief = const AssetGenImage('assets/images/grief.png');
-  final AssetGenImage guidance =
-      const AssetGenImage('assets/images/guidance.png');
-  final AssetGenImage marriage =
-      const AssetGenImage('assets/images/marriage.png');
-  final AssetGenImage mentalHealth =
-      const AssetGenImage('assets/images/mental_health.png');
-  final AssetGenImage psychologist =
-      const AssetGenImage('assets/images/psychologist.png');
-  final AssetGenImage rehabilitation =
-      const AssetGenImage('assets/images/rehabilitation.png');
-  final AssetGenImage student =
-      const AssetGenImage('assets/images/student.png');
+  final AssetGenImage guidance = const AssetGenImage(
+      'assets/images/guidance.png');
+  final AssetGenImage marriage = const AssetGenImage(
+      'assets/images/marriage.png');
+  final AssetGenImage mentalHealth = const AssetGenImage(
+      'assets/images/mental_health.png');
+  final AssetGenImage psychologist = const AssetGenImage(
+      'assets/images/psychologist.png');
+  final AssetGenImage rehabilitation = const AssetGenImage(
+      'assets/images/rehabilitation.png');
+  final AssetGenImage student = const AssetGenImage(
+      'assets/images/student.png');
 }
 
 class AssetGenImage {
   const AssetGenImage(this._assetName, {this.size, this.flavors = const {}});
 
   final String _assetName;
+
 
   final Size? size;
   final Set<String> flavors;
@@ -127,3 +128,4 @@ class AssetGenImage {
 
   String get keyName => _assetName;
 }
+

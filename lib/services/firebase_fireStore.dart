@@ -17,7 +17,9 @@ class FireStoreServices {
   }
   static Future<UserModel?> getUser(String uid) async {
     final user = await _fireStore.collection('users').doc(uid).get();
-    return UserModel.fromMap(user.data()!);
+    final data = user.data();
+    if (data == null) return null;
+    return UserModel.fromMap(data);
   }
 
   // save user to firebase

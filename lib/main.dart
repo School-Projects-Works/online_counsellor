@@ -29,31 +29,32 @@ class MyApp extends ConsumerStatefulWidget {
 }
 
 class _MyAppState extends ConsumerState<MyApp> {
-  Future<bool> _initUser() async {
-    var users = DummyCounsellors.counsellorList();
-    // for (var user in users) {
-    //   user.id = FireStoreServices.getUserId();
-    //   user.createdAt = DateTime.now().millisecondsSinceEpoch;
+  late final Future<bool> _initUserFuture;
 
-    //   await FireStoreServices.saveUser(user);
-    // }
-    ref.watch(quotesProvider.notifier).getQuotes();
-    ref.watch(counsellorsProvider.notifier).getCounsellors();
+  Future<bool> _initUser() async {
+    ref.read(quotesProvider.notifier).getQuotes();
+    ref.read(counsellorsProvider.notifier).getCounsellors();
     //await FirebaseAuthService.signOut();
-    if (FirebaseAuthService.isUserLogin()) {
+    if (!FirebaseAuthService.isUserLogin()) {
+      return false;
+    }
+    try {
       User user = FirebaseAuthService.getCurrentUser();
       await FireStoreServices.updateUserOnlineStatus(user.uid, true);
       UserModel? userModel = await FireStoreServices.getUser(user.uid);
       if (userModel != null) {
         ref.read(userProvider.notifier).setUser(userModel);
+        return true;
       } else {
         CustomDialog.showError(
             title: 'Data Error',
             message: 'Unable to get User info, try again later');
+        return false;
       }
-
-      return true;
-    } else {
+    } catch (e) {
+      CustomDialog.showError(
+          title: 'Data Error',
+          message: 'Unable to get User info, try again later');
       return false;
     }
   }
@@ -62,6 +63,7 @@ class _MyAppState extends ConsumerState<MyApp> {
   @override
   void initState() {
     super.initState();
+    _initUserFuture = _initUser();
   }
 
   @override
@@ -75,10 +77,10 @@ class _MyAppState extends ConsumerState<MyApp> {
         ),
         builder: FlutterSmartDialog.init(),
         home: FutureBuilder<bool>(
-            future: _initUser(),
+            future: _initUserFuture,
             builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                if (snapshot.data!) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                if (snapshot.hasData && snapshot.data!) {
                   return const HomeMainPage();
                 } else {
                   return const AuthMainPage();
